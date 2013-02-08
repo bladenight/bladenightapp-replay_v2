@@ -3,7 +3,6 @@ package de.greencity.bladenightapp.replay;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 import org.apache.commons.io.FileUtils;

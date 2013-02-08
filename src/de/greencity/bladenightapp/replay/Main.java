@@ -4,11 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,23 +12,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocketClient;
-import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import de.greencity.bladenightapp.network.BladenightUrl;
-import de.greencity.bladenightapp.network.messages.EventMessage;
-import de.greencity.bladenightapp.network.messages.GpsInfo;
-import de.greencity.bladenightapp.network.messages.RealTimeUpdateData;
-import de.greencity.bladenightapp.replay.ParticipanLogFile.LogEntry;
-
-import fr.ocroquette.wampoc.adapters.jetty.JettyClient;
-import fr.ocroquette.wampoc.client.RpcResultReceiver;
-import fr.ocroquette.wampoc.client.WampClient;
-import fr.ocroquette.wampoc.common.Channel;
 
 public class Main {
 
@@ -75,6 +56,7 @@ public class Main {
 		player.play();
 	}
 
+	@SuppressWarnings("static-access")
 	private static CommandLine parseCommandLine(String[] args) {
 		// create the command line parser
 		CommandLineParser parser = new PosixParser();
