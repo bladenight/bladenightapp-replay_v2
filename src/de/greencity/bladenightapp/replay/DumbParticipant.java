@@ -1,7 +1,6 @@
 package de.greencity.bladenightapp.replay;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.UUID;
 
 import org.apache.commons.logging.Log;
@@ -10,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.GpsInfo;
 import de.greencity.bladenightapp.routes.Route.LatLong;
-
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
 import fr.ocroquette.wampoc.client.WampClient;
 
