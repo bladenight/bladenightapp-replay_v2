@@ -3,7 +3,13 @@ package de.greencity.bladenightapp.replay;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Stack;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import de.greencity.bladenightapp.geo.CoordinatesConversion;
 import de.greencity.bladenightapp.network.BladenightUrl;
@@ -52,10 +58,48 @@ public class ConstantSpeedPlayer {
 	public void play() {
 		try {
 			getRoute();
-			System.out.println(convertLinearPositionToLatLong(1000));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			getLog().error(e.getMessage(), e);
+			return;
+		}
+		
+		Random random = new Random();
+		Stack<Thread> threads = new Stack<Thread>();
+		for(int i=0; i<participantCount; i++) {
+			final WampClient client;
+			try {
+				client = createNewConnection();
+			} catch (Exception e) {
+				getLog().error(e.getMessage(), e);
+				return;
+			}
+			LinearPositionToLatLongInterface callbackInterface = new LinearPositionToLatLongInterface() {
+				@Override
+				public de.greencity.bladenightapp.routes.Route.LatLong convert(double linearPosition) {
+					LatLong l = convertLinearPositionToLatLong(linearPosition);
+					return new de.greencity.bladenightapp.routes.Route.LatLong(l.getLatitude(), l.getLongitude());
+				}
+			};
+			DumbParticipant participant = new DumbParticipant(client, callbackInterface, updatePeriod);
+			participant.setSpeed(baseSpeed + speedVaration * random.nextDouble());
+			participant.setDeviceId("ConstantSpeed-"+i);
+			getLog().info("Starting a new participant ("+i+")");
+			Thread t = new Thread(participant);
+			threads.push(t);
+			t.start();
+			try {
+				Thread.sleep(startPeriod);
+			} catch (InterruptedException e) {
+				getLog().error(e.getMessage(), e);
+				return;
+			}
+		}
+		while(!threads.empty()) {
+			try {
+				threads.pop().join();
+			} catch (InterruptedException e) {
+				getLog().error(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -69,7 +113,6 @@ public class ConstantSpeedPlayer {
 
 						@Override
 						public void onSuccess() {
-							System.out.println(this.callResultMessage);
 							routeMessage = getPayload(RouteMessage.class);
 							synchronized (signal) {
 								signal.notify();
@@ -78,12 +121,11 @@ public class ConstantSpeedPlayer {
 
 						@Override
 						public void onError() {
-							System.err.println("Could not get the route: " + callErrorMessage);
+							getLog().error("Could not get the route: " + callErrorMessage);
 						}
 					});
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					getLog().error(e.getMessage(), e);
 				}
 			}
 		};
@@ -91,7 +133,7 @@ public class ConstantSpeedPlayer {
 		synchronized (signal) {
 			signal.wait();
 		}
-		System.out.println("Got route " + routeMessage);
+		getLog().info("Got route " + routeMessage);
 	}
 
 	private WampClient createNewConnection() throws URISyntaxException, Exception  {
@@ -126,13 +168,29 @@ public class ConstantSpeedPlayer {
 
 
 	private URI serverUri;
-	RouteMessage routeMessage;
+	private RouteMessage routeMessage;
 
-	private double baseSpeed = 30;
-	private double speedVaration = 20;
+	private double baseSpeed 		= 30.0;
+	private double speedVaration 	= 20.0;
+
 	private int participantCount = 30;
-	private long startPeriod = 5000;
-	private double startPosition = 0;
 
+	private double startPosition = 0.0;
+
+	private long startPeriod = 5000;
+	private int updatePeriod = 3000;
+
+	
+	private static Log log;
+
+	public static void setLog(Log log) {
+		ConstantSpeedPlayer.log = log;
+	}
+
+	protected static Log getLog() {
+		if (log == null)
+			setLog(LogFactory.getLog(ConstantSpeedPlayer.class));
+		return log;
+	}
 
 }
