@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import de.greencity.bladenightapp.network.BladenightUrl;
@@ -69,7 +71,7 @@ public class ParticipantLogFilePlayer {
 			if ( currentSimulatedTime != 0 )
 				Thread.sleep( (long) (( entry.serverTime - currentSimulatedTime ) / timeLapseFactor) );
 			currentSimulatedTime = entry.serverTime;
-			// System.out.println(new DateTime(currentSimulatedTime));
+			getLog().info("Current simulated time: " + new DateTime(currentSimulatedTime));
 
 			String deviceId = entry.deviceId;
 			WampClient wampClient = wampClients.get(deviceId);
@@ -114,4 +116,15 @@ public class ParticipantLogFilePlayer {
 	private DateTime fromDateTime;
 	private DateTime toDateTime;
 
+	private static Log log;
+
+	public static void setLog(Log log) {
+		ParticipantLogFilePlayer.log = log;
+	}
+
+	protected static Log getLog() {
+		if (log == null)
+			setLog(LogFactory.getLog(ParticipantLogFilePlayer.class));
+		return log;
+	}
 }
