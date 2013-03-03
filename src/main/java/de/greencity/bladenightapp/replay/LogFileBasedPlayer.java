@@ -57,7 +57,7 @@ public class LogFileBasedPlayer {
 	}
 
 
-	void replay() throws Exception  {
+	void replay() throws URISyntaxException, InterruptedException, IOException  {
 		Map<String, WampClient> wampClients = new HashMap<String, WampClient>();
 
 		GpsInfo gpsInfo = new GpsInfo();
@@ -101,14 +101,19 @@ public class LogFileBasedPlayer {
 			gpsInfo.setLatitude(logEntries[i].latitude);
 			gpsInfo.setLongitude(logEntries[i].longitude);
 			gpsInfo.setDeviceId(deviceId);
-			wampClient.call(BladenightUrl.PARTICIPANT_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
+			try {
+				wampClient.call(BladenightUrl.PARTICIPANT_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
+			}
+			catch (IOException e) {
+				getLog().error("In RpcResultReceiver:onError()", e);
+				wampClients.put(deviceId, wampClient);
+			}
 		}
 	}
 
-	private WampClient createNewConnection() throws URISyntaxException, Exception  {
+	private WampClient createNewConnection() throws IOException  {
 		JettyClient jettyClient = new JettyClient();
 		jettyClient.connect(serverUri, "undefined");
-
 		return jettyClient.getWampClient();
 	}
 
