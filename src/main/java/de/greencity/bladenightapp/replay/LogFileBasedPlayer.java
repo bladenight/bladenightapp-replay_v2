@@ -14,13 +14,14 @@ import org.joda.time.DateTime;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.GpsInfo;
 import de.greencity.bladenightapp.replay.ParticipanLogFile.LogEntry;
+import de.greencity.bladenightapp.time.Sleep;
 import fr.ocroquette.wampoc.adapters.jetty.JettyClient;
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
 import fr.ocroquette.wampoc.client.WampClient;
 
-public class ParticipantLogFilePlayer {
+public class LogFileBasedPlayer {
 
-	ParticipantLogFilePlayer(URI uri) {
+	LogFileBasedPlayer(URI uri) {
 		this.serverUri = uri; 
 	}
 	
@@ -66,17 +67,22 @@ public class ParticipantLogFilePlayer {
 			LogEntry entry = logEntries[i];
 			if ( entry.serverTime < fromDateTime.getMillis() || entry.serverTime > toDateTime.getMillis() )
 				continue;
-			// System.out.println("logEntry=" + entry);
 
-			if ( currentSimulatedTime != 0 )
-				Thread.sleep( (long) (( entry.serverTime - currentSimulatedTime ) / timeLapseFactor) );
+			if ( currentSimulatedTime != 0 ) {
+				if ( entry.serverTime < currentSimulatedTime )
+					getLog().error("Clock skew detected: " + entry.serverTime + " < " + currentSimulatedTime);
+				else
+					Sleep.sleep( (long) (( entry.serverTime - currentSimulatedTime ) / timeLapseFactor) );
+			}
+			
 			currentSimulatedTime = entry.serverTime;
-			getLog().info("Current simulated time: " + new DateTime(currentSimulatedTime));
+
+			getLog().info("Current simulated time: " + new DateTime(currentSimulatedTime) );
 
 			String deviceId = entry.deviceId;
 			WampClient wampClient = wampClients.get(deviceId);
 			if ( wampClient == null ) {
-				System.out.println("Creating connection for client " + deviceId);
+				getLog().info("Creating connection for client " + deviceId);
 				wampClient = createNewConnection();
 				wampClients.put(deviceId, wampClient);
 			}
@@ -84,14 +90,11 @@ public class ParticipantLogFilePlayer {
 			RpcResultReceiver receiver = new RpcResultReceiver() {
 				@Override
 				public void onSuccess() {
-					// System.out.println("RpcResultReceiver:onSuccess()");
-					// System.out.println(getPayload(RealTimeUpdateData.class));
 				}
 
 				@Override
 				public void onError() {
-					System.err.println("RpcResultReceiver:onError()");
-					System.err.println(this.callErrorMessage);
+					getLog().error("RpcResultReceiver:onError() : " + this.callErrorMessage);
 				}
 			};
 
@@ -119,12 +122,12 @@ public class ParticipantLogFilePlayer {
 	private static Log log;
 
 	public static void setLog(Log log) {
-		ParticipantLogFilePlayer.log = log;
+		LogFileBasedPlayer.log = log;
 	}
 
 	protected static Log getLog() {
 		if (log == null)
-			setLog(LogFactory.getLog(ParticipantLogFilePlayer.class));
+			setLog(LogFactory.getLog(LogFileBasedPlayer.class));
 		return log;
 	}
 }

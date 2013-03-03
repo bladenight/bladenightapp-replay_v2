@@ -9,31 +9,38 @@ import org.apache.commons.logging.LogFactory;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.GpsInfo;
 import de.greencity.bladenightapp.routes.Route.LatLong;
+import de.greencity.bladenightapp.time.Sleep;
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
 import fr.ocroquette.wampoc.client.WampClient;
 
-public class DumbParticipant implements Runnable {
-	private LinearPositionToLatLongInterface callbackInterface;
+public class SpeedControlledParticipant implements Runnable {
 
-	DumbParticipant(WampClient client, LinearPositionToLatLongInterface callbackInterface, long updatePeriod) {
+	public interface SpeedMaster {
+		public double speedAt(double linearPosition);
+	}
+	
+	SpeedControlledParticipant(WampClient client, LinearPositionToLatLongInterface callbackInterface, SpeedMaster speedMaster, long updatePeriod) {
 		this.updatePeriod = updatePeriod;
 		this.callbackInterface = callbackInterface;
+		this.speedMaster = speedMaster;
 		this.wampClient = client;
 		this.deviceId = UUID.randomUUID().toString(); 
 	}
 	
 	@Override
 	public void run() {
+		double linearPosition = startPosition;
 		startTime = System.currentTimeMillis();
+		long sleptTime = 0;
 		while(true) {
-			// getLog().info(getDeviceId()+": getElapsedTime="+getElapsedTime());
-			// getLog().info(getDeviceId()+": speed="+speed);
-			double linearPosition = speed / 3.6 * getElapsedTime() / 1000.0; 
-			// getLog().info(getDeviceId()+": linearPosition="+linearPosition);
+			double speed = speedMaster.speedAt(linearPosition);
+			linearPosition += speed / 3.6 * sleptTime / 1000.0; 
 			LatLong latLong = callbackInterface.convert(linearPosition);
 			try {
 				sendGpsInfo(latLong);
-				Thread.sleep(updatePeriod);
+				long timeBeforeSleep = System.currentTimeMillis();
+				Sleep.sleep(updatePeriod);
+				sleptTime = System.currentTimeMillis() - timeBeforeSleep;
 			} catch (Exception e) {
 				getLog().error(e.getMessage(),e);
 				return;
@@ -81,29 +88,23 @@ public class DumbParticipant implements Runnable {
 		return System.currentTimeMillis() - startTime;
 	}
 	
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
-	
-	public double getSpeed() {
-		return speed;
-	}
-
+	private SpeedMaster speedMaster;
+	private LinearPositionToLatLongInterface callbackInterface;
 	private long startTime;
 	private long updatePeriod;
-	private double speed;
+	private double startPosition;
 	private WampClient wampClient;
 	private String deviceId;
 
 	private static Log log;
 
 	public static void setLog(Log log) {
-		DumbParticipant.log = log;
+		SpeedControlledParticipant.log = log;
 	}
 
 	protected static Log getLog() {
 		if (log == null)
-			setLog(LogFactory.getLog(DumbParticipant.class));
+			setLog(LogFactory.getLog(SpeedControlledParticipant.class));
 		return log;
 	}
 }

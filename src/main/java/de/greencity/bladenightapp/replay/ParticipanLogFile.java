@@ -7,6 +7,8 @@ import java.util.Comparator;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
 
@@ -33,23 +35,35 @@ public class ParticipanLogFile {
 
 	public void load() throws IOException {
 		Gson gson = new Gson();
-		System.out.println("Reading " + file.getAbsolutePath() + "...");
+		getLog().info("Reading " + file.getAbsolutePath() + "...");
 		String jsonString = FileUtils.readFileToString(file, "UTF-8");
-		System.out.println("Parsing...");
+		getLog().info("Parsing...");
 		logEntries = gson.fromJson(jsonString, LogEntry[].class);
-		System.out.println("Sorting...");
+		getLog().info("Sorting...");
 		Arrays.sort(logEntries, new Comparator<LogEntry>() {
 			public int compare(LogEntry o1, LogEntry o2) {
 				return new Long(o2.serverTime).compareTo(o2.serverTime);
 			}
 		});
-		System.out.println("Got " + logEntries.length + " log entries");
+		getLog().info("Got " + logEntries.length + " log entries");
 	}
 	
 	public LogEntry[] getEntries() {
 		return logEntries;
 	}
 
+	private static Log log;
+
+	public static void setLog(Log log) {
+		ParticipanLogFile.log = log;
+	}
+
+	protected static Log getLog() {
+		if (log == null)
+			setLog(LogFactory.getLog(ParticipanLogFile.class));
+		return log;
+	}
+	
 	private File file;
 	private LogEntry[] logEntries;
 }

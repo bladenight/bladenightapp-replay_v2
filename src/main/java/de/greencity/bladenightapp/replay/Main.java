@@ -12,6 +12,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -37,7 +39,7 @@ public class Main {
 
 	private static void runLogFilePlayer()
 			throws URISyntaxException, IOException, Exception {
-		ParticipantLogFilePlayer player = new ParticipantLogFilePlayer(serverUri);
+		LogFileBasedPlayer player = new LogFileBasedPlayer(serverUri);
 
 		player.readLogEntries(new File(commandLine.getOptionValue("file")));
 
@@ -52,7 +54,7 @@ public class Main {
 	}
 
 	private static void runConstantSpeedPlayer() {
-		ConstantSpeedPlayer player = new ConstantSpeedPlayer(serverUri);
+		SpeedControlledPlayer player = new SpeedControlledPlayer(serverUri);
 		player.play();
 	}
 
@@ -101,7 +103,7 @@ public class Main {
 			commandLine = parser.parse( options, args );
 		}
 		catch( ParseException exp ) {
-			System.err.println( exp.getMessage() );
+			getLog().error(exp.getMessage());
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( "bladenightapp-replay", options );
 			System.exit(1);
@@ -113,6 +115,18 @@ public class Main {
 	private static DateTime parseCommandLineDateString(String dateString)  {
 		DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm");
 		return dateFormatter.parseDateTime(dateString);
+	}
+	
+	private static Log log;
+
+	public static void setLog(Log log) {
+		Main.log = log;
+	}
+
+	protected static Log getLog() {
+		if (log == null)
+			setLog(LogFactory.getLog(Main.class));
+		return log;
 	}
 	
 	static private CommandLine commandLine;

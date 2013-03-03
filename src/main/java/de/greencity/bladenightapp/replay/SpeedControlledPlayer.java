@@ -14,12 +14,13 @@ import de.greencity.bladenightapp.geo.CoordinatesConversion;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.LatLong;
 import de.greencity.bladenightapp.network.messages.RouteMessage;
+import de.greencity.bladenightapp.replay.SpeedControlledParticipant.SpeedMaster;
 import fr.ocroquette.wampoc.adapters.jetty.JettyClient;
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
 import fr.ocroquette.wampoc.client.WampClient;
 
-public class ConstantSpeedPlayer {
-	ConstantSpeedPlayer(URI uri) {
+public class SpeedControlledPlayer {
+	SpeedControlledPlayer(URI uri) {
 		this.serverUri = uri; 
 	}
 
@@ -62,7 +63,7 @@ public class ConstantSpeedPlayer {
 			return;
 		}
 		
-		Random random = new Random();
+		final Random random = new Random();
 		Stack<Thread> threads = new Stack<Thread>();
 		for(int i=0; i<participantCount; i++) {
 			final WampClient client;
@@ -79,8 +80,17 @@ public class ConstantSpeedPlayer {
 					return new de.greencity.bladenightapp.routes.Route.LatLong(l.getLatitude(), l.getLongitude());
 				}
 			};
-			DumbParticipant participant = new DumbParticipant(client, callbackInterface, updatePeriod);
-			participant.setSpeed(baseSpeed + speedVaration * random.nextDouble());
+			final double usualSpeed = baseSpeed + speedVaration * random.nextDouble();
+			SpeedMaster speedMaster = new SpeedMaster() {
+				@Override
+				public double speedAt(double linearPosition) {
+					if ( linearPosition > 500 && linearPosition < 700 )
+						return usualSpeed / 10.0;
+					else
+						return usualSpeed; 
+				}
+			};
+			SpeedControlledParticipant participant = new SpeedControlledParticipant(client, callbackInterface, speedMaster, updatePeriod);
 			participant.setDeviceId("ConstantSpeed-"+i);
 			getLog().info("Starting a new participant ("+i+")");
 			Thread t = new Thread(participant);
@@ -183,12 +193,12 @@ public class ConstantSpeedPlayer {
 	private static Log log;
 
 	public static void setLog(Log log) {
-		ConstantSpeedPlayer.log = log;
+		SpeedControlledPlayer.log = log;
 	}
 
 	protected static Log getLog() {
 		if (log == null)
-			setLog(LogFactory.getLog(ConstantSpeedPlayer.class));
+			setLog(LogFactory.getLog(SpeedControlledPlayer.class));
 		return log;
 	}
 
