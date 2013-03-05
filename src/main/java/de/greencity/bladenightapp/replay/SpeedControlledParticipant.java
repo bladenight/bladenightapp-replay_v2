@@ -76,7 +76,7 @@ public class SpeedControlledParticipant implements Runnable {
 		gpsInfo.setLatitude(latLong.lat);
 		gpsInfo.setLongitude(latLong.lon);
 		gpsInfo.setDeviceId(deviceId);
-		wampClient.call(BladenightUrl.PARTICIPANT_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
+		wampClient.call(BladenightUrl.GET_REALTIME_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
 
 	}
 	

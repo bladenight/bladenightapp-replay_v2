@@ -60,8 +60,6 @@ public class LogFileBasedPlayer {
 	void replay() throws URISyntaxException, InterruptedException, IOException  {
 		Map<String, WampClient> wampClients = new HashMap<String, WampClient>();
 
-		GpsInfo gpsInfo = new GpsInfo();
-
 		long currentSimulatedTime = 0;
 		for (int i=0; i<logEntries.length; i++) {
 			LogEntry entry = logEntries[i];
@@ -98,11 +96,9 @@ public class LogFileBasedPlayer {
 				}
 			};
 
-			gpsInfo.setLatitude(logEntries[i].latitude);
-			gpsInfo.setLongitude(logEntries[i].longitude);
-			gpsInfo.setDeviceId(deviceId);
+			GpsInfo gpsInfo = new GpsInfo(deviceId, true, logEntries[i].latitude, logEntries[i].longitude);
 			try {
-				wampClient.call(BladenightUrl.PARTICIPANT_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
+				wampClient.call(BladenightUrl.GET_REALTIME_UPDATE.getText(), receiver, gpsInfo, GpsInfo.class);
 			}
 			catch (IOException e) {
 				getLog().error("In RpcResultReceiver:onError()", e);
