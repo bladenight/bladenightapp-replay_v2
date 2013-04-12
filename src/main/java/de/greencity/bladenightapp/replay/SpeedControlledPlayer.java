@@ -56,6 +56,8 @@ public class SpeedControlledPlayer {
 	}
 
 	public void play() {
+		String deviceIdPrefix = Long.toString(System.currentTimeMillis());
+		
 		try {
 			getRoute();
 		} catch (Exception e) {
@@ -91,7 +93,7 @@ public class SpeedControlledPlayer {
 				}
 			};
 			SpeedControlledParticipant participant = new SpeedControlledParticipant(client, callbackInterface, speedMaster, updatePeriod);
-			participant.setDeviceId("ConstantSpeed-"+i);
+			participant.setDeviceId(deviceIdPrefix+"-ConstantSpeed-"+i);
 			getLog().info("Starting a new participant ("+i+")");
 			Thread t = new Thread(participant);
 			threads.push(t);
@@ -187,7 +189,7 @@ public class SpeedControlledPlayer {
 	private double startPosition = 0.0;
 
 	private long startPeriod = 5000;
-	private int updatePeriod = 3000;
+	private int updatePeriod = 5000;
 
 	
 	private static Log log;

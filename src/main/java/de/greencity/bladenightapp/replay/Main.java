@@ -23,7 +23,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		commandLine = parseCommandLine(args);
 
-		serverUri = new URI("ws://localhost:8081");
+		serverUri = new URI(commandLine.getOptionValue("url", "ws://localhost:8081"));
 
 		if ( commandLine.getOptionValue("file") != null ) {
 			runLogFilePlayer();
@@ -55,6 +55,14 @@ public class Main {
 
 	private static void runConstantSpeedPlayer() {
 		SpeedControlledPlayer player = new SpeedControlledPlayer(serverUri);
+
+		if (commandLine.getOptionValue("speed") != null)
+			player.setBaseSpeed(Double.parseDouble(commandLine.getOptionValue("speed")));
+		if (commandLine.getOptionValue("count") != null)
+			player.setParticipantCount(Integer.parseInt(commandLine.getOptionValue("count")));
+		if (commandLine.getOptionValue("startperiod") != null)
+			player.setStartPeriod(Integer.parseInt(commandLine.getOptionValue("startperiod")));
+
 		player.play();
 	}
 
@@ -65,6 +73,14 @@ public class Main {
 
 		// create the Options
 		Options options = new Options();
+
+		options.addOption(OptionBuilder
+				.withLongOpt( "url" )
+				.withDescription( "server url")
+				.hasArg()
+				.withArgName("URL")
+				.create() );
+
 		options.addOption(OptionBuilder
 				.withLongOpt( "file" )
 				.withDescription( "input log file")
@@ -95,6 +111,18 @@ public class Main {
 				.withDescription( "speed in km/h")
 				.hasArg()
 				.withArgName("SPEED")
+				.create() );
+		options.addOption(OptionBuilder
+				.withLongOpt( "count" )
+				.withDescription( "number of participants to simulate")
+				.hasArg()
+				.withArgName("COUNT")
+				.create() );
+		options.addOption(OptionBuilder
+				.withLongOpt( "startperiod" )
+				.withDescription( "wait time between participant starts")
+				.hasArg()
+				.withArgName("STARTPERIOD")
 				.create() );
 
 		CommandLine commandLine = null;
