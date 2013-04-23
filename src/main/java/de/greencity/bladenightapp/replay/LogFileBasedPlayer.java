@@ -96,7 +96,7 @@ public class LogFileBasedPlayer {
 				}
 			};
 
-			GpsInfo gpsInfo = new GpsInfo(deviceId, true, logEntries[i].latitude, logEntries[i].longitude);
+			GpsInfo gpsInfo = new GpsInfo(deviceId, true, logEntries[i].latitude, logEntries[i].longitude, (int)logEntries[i].accuracy);
 			try {
 				wampClient.call(BladenightUrl.GET_REALTIME_UPDATE.getText(), receiver, gpsInfo);
 			}
