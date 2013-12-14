@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -60,24 +61,23 @@ public class LogFileBasedPlayer {
 	void replay() throws URISyntaxException, InterruptedException, IOException  {
 		Map<String, WampClient> wampClients = new HashMap<String, WampClient>();
 
-		long currentSimulatedTime = 0;
-		for (int i=0; i<logEntries.length; i++) {
-			LogEntry entry = logEntries[i];
-			if ( entry.serverTime < fromDateTime.getMillis() || entry.serverTime > toDateTime.getMillis() )
+		DateTime currentSimulatedTime = null;
+		for (LogEntry logEntry : logEntries ) {
+			if ( logEntry.dateTime.isBefore(fromDateTime) || logEntry.dateTime.isAfter(toDateTime) )
 				continue;
 
-			if ( currentSimulatedTime != 0 ) {
-				if ( entry.serverTime < currentSimulatedTime )
-					getLog().error("Clock skew detected: " + entry.serverTime + " < " + currentSimulatedTime);
+			if ( currentSimulatedTime != null ) {
+				if ( logEntry.dateTime.isBefore(currentSimulatedTime))
+					getLog().error("Clock skew detected: " + logEntry.dateTime + " < " + currentSimulatedTime);
 				else
-					Sleep.sleep( (long) (( entry.serverTime - currentSimulatedTime ) / timeLapseFactor) );
+					Sleep.sleep( (long) (( logEntry.dateTime.getMillis() - currentSimulatedTime.getMillis() ) / timeLapseFactor) );
 			}
 			
-			currentSimulatedTime = entry.serverTime;
+			currentSimulatedTime = logEntry.dateTime;
 
 			getLog().info("Current simulated time: " + new DateTime(currentSimulatedTime) );
 
-			String deviceId = entry.deviceId;
+			String deviceId = logEntry.deviceId;
 			WampClient wampClient = wampClients.get(deviceId);
 			if ( wampClient == null ) {
 				getLog().info("Creating connection for client " + deviceId);
@@ -96,7 +96,7 @@ public class LogFileBasedPlayer {
 				}
 			};
 
-			GpsInfo gpsInfo = new GpsInfo(deviceId, true, logEntries[i].latitude, logEntries[i].longitude, (int)logEntries[i].accuracy);
+			GpsInfo gpsInfo = new GpsInfo(deviceId, true, logEntry.latitude, logEntry.longitude, (int)logEntry.accuracy);
 			try {
 				wampClient.call(BladenightUrl.GET_REALTIME_UPDATE.getText(), receiver, gpsInfo);
 			}
@@ -114,7 +114,7 @@ public class LogFileBasedPlayer {
 	}
 
 
-	private ParticipanLogFile.LogEntry[] logEntries;
+	private List<ParticipanLogFile.LogEntry> logEntries;
 	private double timeLapseFactor = 1.0;
 	private URI serverUri;
 	private DateTime fromDateTime;

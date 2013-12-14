@@ -101,7 +101,7 @@ public class Main {
 				.create() );
 		options.addOption(OptionBuilder
 				.withLongOpt( "timelapse" )
-				.withDescription( "time lapse factor. 60 will for instance cause 1 real sec = 1 bladenight minute ")
+				.withDescription( "time lapse factor. 60 means for instance 1 computer sec = 1 bladenight minute ")
 				.hasArg()
 				.withArgName("TIMELAPSE")
 				.create() );

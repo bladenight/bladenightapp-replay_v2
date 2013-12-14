@@ -6,11 +6,14 @@ use POSIX;
 use Data::Dumper;
 use JSON;
 use feature 'state';
+use Getopt::Long;
+
+my %args = ();
 
 sub text_init {
 }
 
-sub text {
+sub text_line {
   my ($item) = @_;
   my $did;
   eval {
@@ -37,17 +40,17 @@ sub gpx_init {
 
 sub gpx_line {
   my ($item) = @_;
-	my $did;
-  return if $item->{ts_str} !~ /2013-04-30/;
+  my $did;
   eval {
     $did = $item->{wampdata}->[3]->{did};
   };
   if ( $did ) {
     my $la = $item->{wampdata}->[3]->{coo}->{la};
-    my $lo = $item->{wampdata}->[3]->{coo}->{lo};
     return if ! $la;
+    my $lo = $item->{wampdata}->[3]->{coo}->{lo};
+    my $hd = sqrt($item->{wampdata}->[3]->{acc});
     # print join("\t", $item->{ts_str}, $did, $la, $lo) . "\n";
-    printf "<trkpt lat=\"%f\" lon=\"%f\"><ele>0</ele><time>%s</time></trkpt>\n", $la, $lo, $item->{ts_str};
+    printf "<trkpt lat=\"%f\" lon=\"%f\"><ele>0</ele><time>%s</time><hdop>%f</hdop></trkpt>\n", $la, $lo, $item->{ts_str}, $hd;
 	}	
 }
 
@@ -57,9 +60,11 @@ sub gpx_finish {
   </gpx>';
 }
 
-my $output = "gpx";
+GetOptions (\%args, 'file=s', 'format=s', 'date=s', 'deviceid=s') || die "Failed to parse arguments: $!";
 
-&{$output."_init"}();
+my $format = $args{format} || die "Please provide the output format";
+
+&{$format."_init"}();
 
 while(my $line = <>) {
   chomp $line;
@@ -74,8 +79,15 @@ while(my $line = <>) {
     wampdata     => decode_json($fields[3])
   };
   
+  next if $args{date} && $item->{ts_str} !~ /$args{date}/;
+  my $did;
+  eval {
+    $did = $item->{wampdata}->[3]->{did};
+  };
+  next if $args{deviceid} && ($did ne $args{deviceid});
+
 #   print join("\t", $item->{ts_str}, $item->{type}, $item->{session}, $item->{wampdata_str}) . "\n";
-  gpx_line($item);
+  &{$format."_line"}($item);
 }
 
-&{$output."_finish"}();
+&{$format."_finish"}();
