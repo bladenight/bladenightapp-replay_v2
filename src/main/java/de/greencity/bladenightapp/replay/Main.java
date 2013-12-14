@@ -18,12 +18,18 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import de.greencity.bladenightapp.procession.Procession;
+import de.greencity.bladenightapp.replay.log.LogEntryHandler;
+import de.greencity.bladenightapp.replay.log.LogEntryHandlerProcession;
+import de.greencity.bladenightapp.replay.log.LogEntryHandlerWampClient;
+import de.greencity.bladenightapp.replay.log.LogFilePlayer;
+import de.greencity.bladenightapp.replay.speedgen.SpeedControlledPlayer;
+import de.greencity.bladenightapp.routes.Route;
+
 public class Main {
 
 	public static void main(String[] args) throws Exception {
 		commandLine = parseCommandLine(args);
-
-		serverUri = new URI(commandLine.getOptionValue("url", "ws://localhost:8081"));
 
 		if ( commandLine.getOptionValue("file") != null ) {
 			runLogFilePlayer();
@@ -38,8 +44,28 @@ public class Main {
 
 
 	private static void runLogFilePlayer()
-			throws URISyntaxException, IOException, Exception {
-		LogFileBasedPlayer player = new LogFileBasedPlayer(serverUri);
+			throws URISyntaxException, IOException, InterruptedException {
+		
+		LogEntryHandler logEntryHandler;
+		String urlOption = commandLine.getOptionValue("url");
+		if ( urlOption != null ) {
+			logEntryHandler = new LogEntryHandlerWampClient(new URI(urlOption));
+		}
+		else {
+			Route route = new Route();
+			String routeFile = commandLine.getOptionValue("route");
+			if ( ! route.load(new File(routeFile)) ) {
+				getLog().error("Failed to load route: " + routeFile);
+				System.exit(1);
+			}
+			
+			getLog().info("Route length:" + route.getLength());
+			Procession procession = new Procession();
+			procession.setRoute(route);
+			logEntryHandler = new LogEntryHandlerProcession(procession);
+		}
+		LogFilePlayer player = new LogFilePlayer(logEntryHandler);
+		
 
 		player.readLogEntries(new File(commandLine.getOptionValue("file")));
 
@@ -53,8 +79,8 @@ public class Main {
 		player.replay();
 	}
 
-	private static void runConstantSpeedPlayer() {
-		SpeedControlledPlayer player = new SpeedControlledPlayer(serverUri);
+	private static void runConstantSpeedPlayer() throws URISyntaxException {
+		SpeedControlledPlayer player = new SpeedControlledPlayer(new URI(commandLine.getOptionValue("url")));
 
 		if (commandLine.getOptionValue("speed") != null)
 			player.setBaseSpeed(Double.parseDouble(commandLine.getOptionValue("speed")));
@@ -86,6 +112,12 @@ public class Main {
 				.withDescription( "input log file")
 				.hasArg()
 				.withArgName("LOGFILE")
+				.create() );
+		options.addOption(OptionBuilder
+				.withLongOpt( "route" )
+				.withDescription( "route file (kml)")
+				.hasArg()
+				.withArgName("ROUTEFILE")
 				.create() );
 		options.addOption(OptionBuilder
 				.withLongOpt( "fromtime" )
@@ -145,6 +177,8 @@ public class Main {
 		return dateFormatter.parseDateTime(dateString);
 	}
 	
+	final String DEFAULT_URL = "ws://localhost:8081";
+	
 	private static Log log;
 
 	public static void setLog(Log log) {
@@ -158,5 +192,4 @@ public class Main {
 	}
 	
 	static private CommandLine commandLine;
-	static private URI serverUri;
 }

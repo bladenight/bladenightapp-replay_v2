@@ -1,4 +1,4 @@
-package de.greencity.bladenightapp.replay;
+package de.greencity.bladenightapp.replay.speedgen;
 
 import de.greencity.bladenightapp.routes.Route.LatLong;
 

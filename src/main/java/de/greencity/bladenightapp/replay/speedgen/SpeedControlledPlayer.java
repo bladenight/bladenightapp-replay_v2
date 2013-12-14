@@ -1,4 +1,4 @@
-package de.greencity.bladenightapp.replay;
+package de.greencity.bladenightapp.replay.speedgen;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,13 +14,13 @@ import de.greencity.bladenightapp.geo.CoordinatesConversion;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.LatLong;
 import de.greencity.bladenightapp.network.messages.RouteMessage;
-import de.greencity.bladenightapp.replay.SpeedControlledParticipant.SpeedMaster;
+import de.greencity.bladenightapp.replay.speedgen.SpeedControlledParticipant.SpeedMaster;
 import fr.ocroquette.wampoc.adapters.jetty.JettyClient;
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
 import fr.ocroquette.wampoc.client.WampClient;
 
 public class SpeedControlledPlayer {
-	SpeedControlledPlayer(URI uri) {
+	public SpeedControlledPlayer(URI uri) {
 		this.serverUri = uri; 
 	}
 

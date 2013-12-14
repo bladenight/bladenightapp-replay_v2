@@ -1,4 +1,4 @@
-package de.greencity.bladenightapp.replay;
+package de.greencity.bladenightapp.replay.log;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import de.greencity.bladenightapp.valuelogger.ValueReader.Entry;
 
 public class ParticipanLogFile {
 
-	class LogEntry {
+	public class LogEntry {
 		public String deviceId;
 		public DateTime dateTime; 
 		public double latitude; 
