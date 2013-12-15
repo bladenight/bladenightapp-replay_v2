@@ -18,6 +18,7 @@ public class LogFilePlayer {
 	}
 
 	public void readLogEntries(File file) throws IOException {
+		getLog().info("Reading log file...");
 		ParticipanLogFile logFile = new ParticipanLogFile(file);
 		logFile.load();
 		logEntries = logFile.getEntries();
@@ -49,6 +50,7 @@ public class LogFilePlayer {
 
 	public void replay() throws InterruptedException {
 		DateTime currentSimulatedTime = null;
+		getLog().info("Starting replay...");
 		for (LogEntry logEntry : logEntries ) {
 			if ( logEntry.dateTime.isBefore(fromDateTime) || logEntry.dateTime.isAfter(toDateTime) )
 				continue;

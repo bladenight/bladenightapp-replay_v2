@@ -18,7 +18,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.LogEntryHandlerProcession;
 import de.greencity.bladenightapp.replay.log.LogEntryHandlerWampClient;
@@ -60,9 +59,7 @@ public class Main {
 			}
 			
 			getLog().info("Route length:" + route.getLength());
-			Procession procession = new Procession();
-			procession.setRoute(route);
-			logEntryHandler = new LogEntryHandlerProcession(procession);
+			logEntryHandler = new LogEntryHandlerProcession(route);
 		}
 		LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 		
