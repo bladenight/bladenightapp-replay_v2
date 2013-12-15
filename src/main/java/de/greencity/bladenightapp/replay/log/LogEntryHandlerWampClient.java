@@ -23,6 +23,11 @@ public class LogEntryHandlerWampClient implements LogEntryHandler {
 	}
 
 	@Override
+	public void finish() {
+		// TODO we should close the connections here
+	}
+
+	@Override
 	public void handleLogEntry(LogEntry logEntry) throws Exception {
 		String deviceId = logEntry.deviceId;
 		WampClient wampClient = wampClients.get(deviceId);
@@ -74,4 +79,5 @@ public class LogEntryHandlerWampClient implements LogEntryHandler {
 			setLog(LogFactory.getLog(LogEntryHandlerWampClient.class));
 		return log;
 	}
+
 }

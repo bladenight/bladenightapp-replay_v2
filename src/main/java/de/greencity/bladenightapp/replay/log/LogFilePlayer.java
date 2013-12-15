@@ -72,6 +72,7 @@ public class LogFilePlayer {
 				getLog().error("Handler failed to process log entry " + logEntry, e);
 			}
 		}
+		logEntryHandler.finish();
 	}
 	
 	private double timeLapseFactor = 1.0;

@@ -7,4 +7,6 @@ public interface LogEntryHandler {
 
 	public abstract void handleLogEntry(LogEntry logEntry) throws Exception;
 
+	public abstract void finish();
+
 }
