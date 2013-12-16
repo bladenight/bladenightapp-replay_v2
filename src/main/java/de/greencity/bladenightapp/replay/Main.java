@@ -19,9 +19,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
-import de.greencity.bladenightapp.replay.log.LogEntryHandlerProcession;
-import de.greencity.bladenightapp.replay.log.LogEntryHandlerWampClient;
 import de.greencity.bladenightapp.replay.log.LogFilePlayer;
+import de.greencity.bladenightapp.replay.log.local.LogEntryHandlerProcession;
+import de.greencity.bladenightapp.replay.log.wamp.LogEntryHandlerWampClient;
 import de.greencity.bladenightapp.replay.speedgen.SpeedControlledPlayer;
 import de.greencity.bladenightapp.routes.Route;
 
@@ -57,9 +57,11 @@ public class Main {
 				getLog().error("Failed to load route: " + routeFile);
 				System.exit(1);
 			}
-			
+			String prefix = "log";
+			if (commandLine.getOptionValue("fromtime") != null)
+				prefix = parseCommandLineDateString(commandLine.getOptionValue("fromtime")).toString("yyyy-MM-dd");
 			getLog().info("Route length:" + route.getLength());
-			logEntryHandler = new LogEntryHandlerProcession(route);
+			logEntryHandler = new LogEntryHandlerProcession(prefix, route);
 		}
 		LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 		
