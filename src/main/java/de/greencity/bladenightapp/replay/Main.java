@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -18,12 +19,18 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import de.greencity.bladenightapp.events.Event;
+import de.greencity.bladenightapp.events.EventList;
+import de.greencity.bladenightapp.persistence.InconsistencyException;
+import de.greencity.bladenightapp.persistence.ListPersistor;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.LogFilePlayer;
+import de.greencity.bladenightapp.replay.log.ParticipanLogFile;
 import de.greencity.bladenightapp.replay.log.local.LogEntryHandlerProcession;
 import de.greencity.bladenightapp.replay.log.wamp.LogEntryHandlerWampClient;
 import de.greencity.bladenightapp.replay.speedgen.SpeedControlledPlayer;
 import de.greencity.bladenightapp.routes.Route;
+import de.greencity.bladenightapp.routes.RouteStore;
 
 public class Main {
 
@@ -43,29 +50,25 @@ public class Main {
 
 
 	private static void runLogFilePlayer()
-			throws URISyntaxException, IOException, InterruptedException {
+			throws URISyntaxException, IOException, InterruptedException, InconsistencyException {
 		
-		LogEntryHandler logEntryHandler;
 		String urlOption = commandLine.getOptionValue("url");
+		String eventsDirOption = commandLine.getOptionValue("events-dir");
 		if ( urlOption != null ) {
-			logEntryHandler = new LogEntryHandlerWampClient(new URI(urlOption));
+			runLogFilePlayerWithWampClient(urlOption);
+		}
+		else if ( eventsDirOption != null ) {
+			runLogFilePlayerLocalForEveryEvent();
 		}
 		else {
-			Route route = new Route();
-			String routeFile = commandLine.getOptionValue("route");
-			if ( ! route.load(new File(routeFile)) ) {
-				getLog().error("Failed to load route: " + routeFile);
-				System.exit(1);
-			}
-			String prefix = "log";
-			if (commandLine.getOptionValue("fromtime") != null)
-				prefix = parseCommandLineDateString(commandLine.getOptionValue("fromtime")).toString("yyyy-MM-dd");
-			getLog().info("Route length:" + route.getLength());
-			logEntryHandler = new LogEntryHandlerProcession(prefix, route);
+			runLogFilePlayerLocal();
 		}
+
+	}
+	
+	private static LogFilePlayer createPlayerFromOptions(LogEntryHandler logEntryHandler) throws IOException {
 		LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 		
-
 		player.readLogEntries(new File(commandLine.getOptionValue("file")));
 
 		if (commandLine.getOptionValue("fromtime") != null)
@@ -74,7 +77,58 @@ public class Main {
 			player.setToDateTime(parseCommandLineDateString(commandLine.getOptionValue("totime")));
 		if (commandLine.getOptionValue("timelapse") != null)
 			player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
+		
+		return player;
+	}
+	
+	private static void runLogFilePlayerWithWampClient(String url) throws URISyntaxException, IOException, InterruptedException {
+		LogEntryHandler logEntryHandler;
+		logEntryHandler = new LogEntryHandlerWampClient(new URI(url));
+		LogFilePlayer player = createPlayerFromOptions(logEntryHandler);
+		player.replay();
+	}
 
+	private static void runLogFilePlayerLocalForEveryEvent() throws IOException, InconsistencyException, InterruptedException {
+		String eventsDirOption = commandLine.getOptionValue("events-dir");
+		String routesDirOption = commandLine.getOptionValue("routes-dir");
+		EventList eventList = new EventList();
+		ListPersistor<Event> persistor = new ListPersistor<Event>(Event.class);
+		persistor.setDirectory(new File(eventsDirOption));
+		eventList.setPersistor(persistor);
+		eventList.read();
+		RouteStore routeStore = new RouteStore(new File(routesDirOption));
+		ParticipanLogFile logFile = new ParticipanLogFile(new File(commandLine.getOptionValue("file")));
+		getLog().info("Reading log file...");
+		logFile.load();
+		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
+		for(Event event : eventList) {
+			System.out.println(event);
+			String prefix = event.getStartDate().toString("yyyy-MM-dd");
+			Route route = routeStore.getRoute(event.getRouteName());
+			LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route);
+			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
+			player.setFromDateTime(event.getStartDate());
+			player.setToDateTime(event.getEndDate());
+			if (commandLine.getOptionValue("timelapse") != null)
+				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
+			player.setLogEntries(logEntries);
+			player.replay();
+		}
+	}
+
+	private static void runLogFilePlayerLocal() throws InterruptedException, IOException {
+		Route route = new Route();
+		String routeFile = commandLine.getOptionValue("route");
+		if ( ! route.load(new File(routeFile)) ) {
+			getLog().error("Failed to load route: " + routeFile);
+			System.exit(1);
+		}
+		String prefix = "log";
+		if (commandLine.getOptionValue("fromtime") != null)
+			prefix = parseCommandLineDateString(commandLine.getOptionValue("fromtime")).toString("yyyy-MM-dd");
+		getLog().info("Route length:" + route.getLength());
+		LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route);
+		LogFilePlayer player = createPlayerFromOptions(logEntryHandler);
 		player.replay();
 	}
 
@@ -111,6 +165,18 @@ public class Main {
 				.withDescription( "input log file")
 				.hasArg()
 				.withArgName("LOGFILE")
+				.create() );
+		options.addOption(OptionBuilder
+				.withLongOpt( "events-dir" )
+				.withDescription( "events directory")
+				.hasArg()
+				.withArgName("EVENTSDIR")
+				.create() );
+		options.addOption(OptionBuilder
+				.withLongOpt( "routes-dir" )
+				.withDescription( "routes directory")
+				.hasArg()
+				.withArgName("EVENTSDIR")
 				.create() );
 		options.addOption(OptionBuilder
 				.withLongOpt( "route" )

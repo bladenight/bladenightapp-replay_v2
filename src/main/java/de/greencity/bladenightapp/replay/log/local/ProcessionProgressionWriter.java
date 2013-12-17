@@ -18,6 +18,10 @@ public class ProcessionProgressionWriter extends StatisticsWriter {
 	@Override
 	public void checkpoint(DateTime dateTime) {
 		Statistics statistics = procession.getStatistics();
+		if ( statistics == null ) {
+			getLog().debug("No statistics available");
+			return;
+		}
 		SegmentedLinearRoute segmentedLinearRoute = new SegmentedLinearRoute(statistics.segments.length, procession.getRoute().getLength());
 		for (int routeSegment = 0 ; routeSegment < statistics.segments.length ; routeSegment++) {
 			double positionOnRoute = segmentedLinearRoute.getPositionOfSegmentStart(routeSegment);

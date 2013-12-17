@@ -22,6 +22,10 @@ public class ProcessionLengthWriter extends StatisticsWriter {
 	@Override
 	public void checkpoint(DateTime dateTime) {
 		Statistics statistics = procession.getStatistics();
+		if ( statistics == null ) {
+			getLog().debug("No statistics available");
+			return;
+		}
 		SegmentedLinearRoute segmentedLinearRoute = new SegmentedLinearRoute(statistics.segments.length, procession.getRoute().getLength());
 		SegmentedLinearRoute segmentedProcession = new SegmentedLinearRoute(100, maxProcessionLength);
 		for (int processionSegment = 0 ; processionSegment < segmentedProcession.getNumberOfSegments() ; processionSegment++) {

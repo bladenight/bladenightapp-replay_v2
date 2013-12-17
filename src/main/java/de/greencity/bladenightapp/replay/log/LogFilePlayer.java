@@ -24,6 +24,10 @@ public class LogFilePlayer {
 		logEntries = logFile.getEntries();
 	}
 
+	public void setLogEntries(List<LogEntry> logEntries) {
+		this.logEntries = logEntries;
+	}
+
 	public DateTime getFromDateTime() {
 		return fromDateTime;
 	}
