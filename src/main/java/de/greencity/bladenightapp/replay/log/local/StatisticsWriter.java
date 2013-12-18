@@ -70,7 +70,7 @@ public abstract class StatisticsWriter {
 		Map<String, String> combinedFields = new HashMap<String, String>();
 		combinedFields.put("BASE_FILENAME", baseFilename);
 		combinedFields.put("DATA_FILE", dataFilePath);
-		for (String v: customFields.values()) {
+		for (String v: customFields.keySet()) {
 			combinedFields.put(v, customFields.get(v));
 		}
 

@@ -29,10 +29,14 @@ public class ProcessionProgressionWriter extends StatisticsWriter {
 			double speed = segment.speed;
 			if ( Double.isNaN(segment.speed) || Double.isInfinite(segment.speed) || segment.nParticipants <= 0 )
 				speed = -1;
+			if ( segmentedLinearRoute.getPositionOfSegmentEnd(routeSegment) < procession.getTailPosition() ||
+					segmentedLinearRoute.getPositionOfSegmentStart(routeSegment) > procession.getHeadPosition())
+				speed = -1;
 			writeDataLine(
 					dateTime + "\t" +
-							convertPositionForOutput(positionOnRoute)+ "\t" +
-							convertSpeedForOutput(speed)
+							convertPositionForOutput(positionOnRoute) + "\t" +
+							convertSpeedForOutput(speed) + "\t" +
+							segment.nParticipants
 					);
 		}
 	}

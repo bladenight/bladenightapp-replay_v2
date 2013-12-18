@@ -7,7 +7,7 @@ set datafile sep '\t'
 set format x "%H:%M"
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%.png"
+set output "%BASE_FILENAME%-speed.png"
 
 set ylabel "Position auf der Strecke (km)"
 
@@ -18,4 +18,12 @@ set cblabel "km / h"
 pos_only(x) = x > 0 ? x : 1/0
 
 plot '%DATA_FILE%' u 1:2:3 with image
+
+set output "%BASE_FILENAME%-density.png"
+
+set palette defined ( 0 "white", 1 "blue", 3 "yellow", 5 "red", 10 "purple")
+set cbrange [0:10]
+set cblabel "Anzahl Benutzer"
+
+plot '%DATA_FILE%' u 1:2:4 with image
 

@@ -9,14 +9,12 @@ set format x "%H:%M"
 set term pngcairo size 1200,900
 set output "%BASE_FILENAME%.png"
 
-set ylabel "Position innerhalb des Zuges (km)"
-set yrange [0:6]
+set ylabel "Entfernung des Schluss von der Spitze (km)"
+set yrange [0:%MAX_PROCESSION_LENGTH%]
 
 set palette defined ( -1 "white", 0 "red", 10 "yellow", 20 "green", 25 "green", 35 "purple")
 set cbrange [-1:35]
 set cblabel "km / h"
-
-pos_only(x) = x > 0 ? x : 1/0
 
 plot '%DATA_FILE%' u 1:2:3 with image
 

@@ -29,16 +29,20 @@ public class ProcessionLengthWriter extends StatisticsWriter {
 		SegmentedLinearRoute segmentedLinearRoute = new SegmentedLinearRoute(statistics.segments.length, procession.getRoute().getLength());
 		SegmentedLinearRoute segmentedProcession = new SegmentedLinearRoute(100, maxProcessionLength);
 		for (int processionSegment = 0 ; processionSegment < segmentedProcession.getNumberOfSegments() ; processionSegment++) {
-			double positionInProcession = segmentedProcession.getPositionOfSegmentStart(processionSegment);
-			int routeSegment = segmentedLinearRoute.getSegmentForLinearPosition(procession.getTailPosition() + positionInProcession);
+			double distanceFromHead = segmentedProcession.getPositionOfSegmentStart(processionSegment);
+			double positionOnRoute = procession.getHeadPosition() - distanceFromHead;
+			int routeSegment = segmentedLinearRoute.getSegmentForLinearPosition(positionOnRoute);
 			Segment segment = statistics.segments[routeSegment];
 
 			double speed = segment.speed;
 			if ( Double.isNaN(segment.speed) || Double.isInfinite(segment.speed) || segment.nParticipants <= 0 )
 				speed = -1;
+			if ( positionOnRoute < procession.getTailPosition() || positionOnRoute > procession.getHeadPosition())
+				speed = -1;
+				
 			writeDataLine(
 					dateTime + "\t" +
-							convertPositionForOutput(positionInProcession)+ "\t" +
+							convertPositionForOutput(distanceFromHead)+ "\t" +
 							convertSpeedForOutput(speed)
 					);
 		}

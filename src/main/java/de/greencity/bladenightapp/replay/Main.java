@@ -20,6 +20,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import de.greencity.bladenightapp.events.Event;
+import de.greencity.bladenightapp.events.Event.EventStatus;
 import de.greencity.bladenightapp.events.EventList;
 import de.greencity.bladenightapp.persistence.InconsistencyException;
 import de.greencity.bladenightapp.persistence.ListPersistor;
@@ -103,6 +104,8 @@ public class Main {
 		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
 		for(Event event : eventList) {
 			System.out.println(event);
+			if ( event.getStatus() != EventStatus.CONFIRMED )
+				continue;
 			String prefix = event.getStartDate().toString("yyyy-MM-dd");
 			Route route = routeStore.getRoute(event.getRouteName());
 			LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route);
