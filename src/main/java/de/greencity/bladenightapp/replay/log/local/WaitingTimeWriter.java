@@ -4,13 +4,14 @@ import java.io.IOException;
 
 import org.joda.time.DateTime;
 
+import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 
 public class WaitingTimeWriter extends StatisticsWriter {
 
-	WaitingTimeWriter(String baseFilename, Procession procession) throws IOException {
-		super(baseFilename, procession);
+	WaitingTimeWriter(String baseFilename, Procession procession, Event event) throws IOException {
+		super(baseFilename, procession, event);
 		this.segments = new Segment[100];
 		for (int i = 0; i < segments.length ; i ++)
 			segments[i] = new Segment();

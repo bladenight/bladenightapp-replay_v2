@@ -7,13 +7,12 @@ set datafile sep '\t'
 set xlabel "Uhrzeit"
 set format x "%H:%M"
 
-set ylabel "Position auf der Strecke (km)"
+set ylabel "Anzahl Benutzer"
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%.png"
+set output "%BASE_FILENAME%-users.png"
 
 %EVENT_INFO_LABELS%
 
-plot '%DATA_FILE%' using 1:2 with lines title "Zugspitze", \
-     '%DATA_FILE%' using 1:4 with lines title "Zugschluss"
+plot '%DATA_FILE%' u 1:2 with line notitle
 

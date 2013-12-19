@@ -10,5 +10,7 @@ set xlabel "Position auf der Strecke (km)"
 # set yrange [0:5000]
 set ylabel "Wartezeit auf der Strecke (min)"
 
-plot '%DATA_FILE%' u 1:2 with line
+%EVENT_INFO_LABELS%
+
+plot '%DATA_FILE%' u 1:2 with line notitle
 

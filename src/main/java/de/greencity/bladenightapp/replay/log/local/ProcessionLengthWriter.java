@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.procession.Statistics;
@@ -15,8 +16,8 @@ public class ProcessionLengthWriter extends StatisticsWriter {
 
 	final double maxProcessionLength = 6000.0;
 	
-	ProcessionLengthWriter(String baseFilename, Procession procession) throws IOException {
-		super(baseFilename, procession);
+	ProcessionLengthWriter(String baseFilename, Procession procession, Event event) throws IOException {
+		super(baseFilename, procession, event);
 	}
 
 	@Override

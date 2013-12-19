@@ -13,17 +13,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
+import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
 public abstract class StatisticsWriter {
 
-	StatisticsWriter(String baseFilename, Procession procession) throws IOException {
+	StatisticsWriter(String baseFilename, Procession procession, Event event) throws IOException {
 		this.procession = procession;
 		this.baseFilename = baseFilename;
 		this.dataFilePath  = baseFilename + ".log";
 		this.gnuplotConfigPath  = baseFilename + ".gp";
 		this.dataWriter = new FileWriter(dataFilePath);
 		this.gnuplotConfigWriter = new FileWriter(gnuplotConfigPath);
+		this.event = event;
 	}
 
 	public abstract void checkpoint(DateTime dateTime);
@@ -65,11 +67,30 @@ public abstract class StatisticsWriter {
 	protected void writeGnuplotConfig(String template) {
 		writeGnuplotConfig(template, getGnuplotCustomFields());
 	}
-	
+
 	private void writeGnuplotConfig(String template, Map<String, String> customFields) {
 		Map<String, String> combinedFields = new HashMap<String, String>();
 		combinedFields.put("BASE_FILENAME", baseFilename);
 		combinedFields.put("DATA_FILE", dataFilePath);
+		if ( event != null ) {
+			String eventdate = event.getStartDate().toString("dd.MM.yyyy");
+			String routeName = event.getRouteName();
+			String participants = Integer.toString(event.getParticipants());
+			combinedFields.put("EVENT_DATE", eventdate);
+			combinedFields.put("EVENT_ROUTE", routeName);
+			combinedFields.put("EVENT_PARTICIPANTS", participants);
+			StringBuilder eventInfoLabelsBuilder = new StringBuilder();
+			eventInfoLabelsBuilder.append("set label \"" + eventdate + "\" at screen 0.1, screen 0.9 front\n");
+			eventInfoLabelsBuilder.append("set label \"Strecke : " + routeName + "\" at screen 0.1, screen 0.87 front\n");
+			eventInfoLabelsBuilder.append("set label \"" + participants + " skaters\" at screen 0.1, screen 0.84 front\n");
+			combinedFields.put("EVENT_INFO_LABELS", eventInfoLabelsBuilder.toString());
+		}
+		else {
+			combinedFields.put("EVENT_DATE", "-");
+			combinedFields.put("EVENT_ROUTE", "-");
+			combinedFields.put("EVENT_PARTICIPANTS", "-");
+		}
+
 		for (String v: customFields.keySet()) {
 			combinedFields.put(v, customFields.get(v));
 		}
@@ -88,7 +109,7 @@ public abstract class StatisticsWriter {
 		return new HashMap<String, String>();
 	}
 
-	
+
 	public static String replaceAll(String text, Map<String, String> params) {
 		return replaceAll(text, params, '%', '%');
 	}
@@ -141,8 +162,17 @@ public abstract class StatisticsWriter {
 		return ((long)(speed*10.0) / 10.0);
 	}
 
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
+	}
 
 	protected Procession procession;
+	protected Event event;
+
 
 	protected String baseFilename;
 
@@ -164,5 +194,6 @@ public abstract class StatisticsWriter {
 			setLog(LogFactory.getLog(StatisticsWriter.class));
 		return log;
 	}
+
 
 }

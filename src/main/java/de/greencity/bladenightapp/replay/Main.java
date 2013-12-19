@@ -108,7 +108,7 @@ public class Main {
 				continue;
 			String prefix = event.getStartDate().toString("yyyy-MM-dd");
 			Route route = routeStore.getRoute(event.getRouteName());
-			LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route);
+			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(prefix, route, event);
 			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 			player.setFromDateTime(event.getStartDate());
 			player.setToDateTime(event.getEndDate());
@@ -130,7 +130,7 @@ public class Main {
 		if (commandLine.getOptionValue("fromtime") != null)
 			prefix = parseCommandLineDateString(commandLine.getOptionValue("fromtime")).toString("yyyy-MM-dd");
 		getLog().info("Route length:" + route.getLength());
-		LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route);
+		LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route, null);
 		LogFilePlayer player = createPlayerFromOptions(logEntryHandler);
 		player.replay();
 	}

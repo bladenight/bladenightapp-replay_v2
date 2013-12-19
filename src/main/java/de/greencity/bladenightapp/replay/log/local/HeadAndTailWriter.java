@@ -4,12 +4,13 @@ import java.io.IOException;
 
 import org.joda.time.DateTime;
 
+import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
 public class HeadAndTailWriter extends StatisticsWriter {
 
-	HeadAndTailWriter(String baseFilename, Procession procession) throws IOException {
-		super(baseFilename, procession);
+	HeadAndTailWriter(String baseFilename, Procession procession, Event event) throws IOException {
+		super(baseFilename, procession, event);
 	}
 
 	@Override
