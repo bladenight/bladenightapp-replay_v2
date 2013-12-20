@@ -10,7 +10,7 @@ set format x "%H:%M"
 set ylabel "Anzahl Benutzer"
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%-users.png"
+set output "%PNG_FILE%"
 
 %EVENT_INFO_LABELS%
 

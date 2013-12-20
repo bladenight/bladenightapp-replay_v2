@@ -24,7 +24,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		procession = new Procession(controlledClock);
 		procession.setRoute(route);
 
-		this.writers = new ArrayList<StatisticsWriter>();
+		this.writers = new ArrayList<GnuplotWriter>();
 		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
 		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
 		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
@@ -34,8 +34,10 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 
 	@Override
 	public void finish() {
-		for (StatisticsWriter writer : this.writers) {
+		for (GnuplotWriter writer : this.writers) {
 			writer.finish();
+			writer.addOutputImageFilesToThisList(outputImageFileList);
+			System.out.println("size="+outputImageFileList.size());
 		}
 	}
 
@@ -52,7 +54,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 			collector.collect();
 			procession.compute();
 			lastPrintTime = logEntry.dateTime;
-			for (StatisticsWriter writer : this.writers) {
+			for (GnuplotWriter writer : this.writers) {
 				writer.checkpoint(logEntry.dateTime);
 			}
 
@@ -72,12 +74,18 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		return collector;
 	}
 
+	public List<OutputImageFile> getOutputImageFileList() {
+		return outputImageFileList;
+	}
+
+
 	private Procession procession;
 
 	private Log log;
 	private DateTime lastPrintTime = null;
 	private ControlledClock controlledClock = new ControlledClock();
-	List<StatisticsWriter> writers;
+	private List<GnuplotWriter> writers;
+	private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
 
 	public void setLog(Log log) {
 		this.log = log;

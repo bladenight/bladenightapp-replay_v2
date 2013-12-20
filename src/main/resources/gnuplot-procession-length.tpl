@@ -15,7 +15,7 @@ set cbrange [-1:35]
 set cblabel "km / h"
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%.png"
+set output "%PNG_FILE%"
 
 %EVENT_INFO_LABELS%
 

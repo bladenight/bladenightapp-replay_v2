@@ -1,7 +1,7 @@
 package de.greencity.bladenightapp.replay.log.local;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -12,7 +12,7 @@ import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.procession.Statistics;
 import de.greencity.bladenightapp.procession.Statistics.Segment;
 
-public class ProcessionLengthWriter extends StatisticsWriter {
+public class ProcessionLengthWriter extends GnuplotWriter {
 
 	final double maxProcessionLength = 6000.0;
 	
@@ -55,10 +55,18 @@ public class ProcessionLengthWriter extends StatisticsWriter {
 	}
 
 	@Override
-	protected Map<String, String> getGnuplotCustomFields() {
-		Map<String, String> customFields = new HashMap<String, String>();
-		customFields.put("MAX_PROCESSION_LENGTH", Double.toString(convertPositionForOutput(maxProcessionLength)));
-		return customFields;
+	protected void addOutputImageFilesToThisList(List<OutputImageFile> list) {
+		list.add(new OutputImageFile(getPngFile(), "procession-length", 25));
+	}
+
+	@Override
+	protected void specifyGnuplotCustomFields(Map<String, String> map) {
+		map.put("PNG_FILE", getPngFile());
+		map.put("MAX_PROCESSION_LENGTH", Double.toString(convertPositionForOutput(maxProcessionLength)));
+	}
+
+	private String getPngFile() {
+		return baseFilename + ".png";
 	}
 
 }

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,6 +21,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.sun.tools.doclets.formats.html.markup.HtmlWriter;
+
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.events.Event.EventStatus;
 import de.greencity.bladenightapp.events.EventList;
@@ -28,6 +32,7 @@ import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.LogFilePlayer;
 import de.greencity.bladenightapp.replay.log.ParticipanLogFile;
 import de.greencity.bladenightapp.replay.log.local.LogEntryHandlerProcession;
+import de.greencity.bladenightapp.replay.log.local.OutputImageFile;
 import de.greencity.bladenightapp.replay.log.wamp.LogEntryHandlerWampClient;
 import de.greencity.bladenightapp.replay.speedgen.SpeedControlledPlayer;
 import de.greencity.bladenightapp.routes.Route;
@@ -102,6 +107,7 @@ public class Main {
 		getLog().info("Reading log file...");
 		logFile.load();
 		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
+		Map<Event, List<OutputImageFile>> outputImageFilesByEvent = new HashMap<Event, List<OutputImageFile>>();
 		for(Event event : eventList) {
 			System.out.println(event);
 			if ( event.getStatus() != EventStatus.CONFIRMED )
@@ -115,8 +121,11 @@ public class Main {
 			if (commandLine.getOptionValue("timelapse") != null)
 				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
 			player.setLogEntries(logEntries);
-			player.replay();
+			// player.replay();
+			logEntryHandler.finish();
+			outputImageFilesByEvent.put(event, logEntryHandler.getOutputImageFileList());
 		}
+		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(outputImageFilesByEvent).write();
 	}
 
 	private static void runLogFilePlayerLocal() throws InterruptedException, IOException {

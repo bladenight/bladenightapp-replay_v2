@@ -1,6 +1,8 @@
 package de.greencity.bladenightapp.replay.log.local;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -10,7 +12,7 @@ import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.procession.Statistics;
 import de.greencity.bladenightapp.procession.Statistics.Segment;
 
-public class ProcessionProgressionWriter extends StatisticsWriter {
+public class ProcessionProgressionWriter extends GnuplotWriter {
 
 	ProcessionProgressionWriter(String baseFilename, Procession procession, Event event) throws IOException {
 		super(baseFilename, procession, event);
@@ -50,6 +52,26 @@ public class ProcessionProgressionWriter extends StatisticsWriter {
 	@Override
 	protected String getGnuplotTemplateName() {
 		return "gnuplot-procession-progression.tpl";
+	}
+
+	@Override
+	protected void addOutputImageFilesToThisList(List<OutputImageFile> list) {
+		list.add(new OutputImageFile(getPngFileSpeed(), "procession-progression-speed", 30));
+		list.add(new OutputImageFile(getPngFileDensity(), "procession-progression-density", 35));
+	}
+
+	@Override
+	protected void specifyGnuplotCustomFields(Map<String, String> map) {
+		map.put("PNG_FILE_SPEED", getPngFileDensity());
+		map.put("PNG_FILE_DENSITY", getPngFileSpeed());
+	}
+
+	private String getPngFileDensity() {
+		return baseFilename + "-density.png";
+	}
+
+	private String getPngFileSpeed() {
+		return baseFilename + "-speed.png";
 	}
 
 }

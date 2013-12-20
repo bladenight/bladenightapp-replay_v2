@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,9 +17,9 @@ import org.joda.time.DateTime;
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
-public abstract class StatisticsWriter {
+public abstract class GnuplotWriter {
 
-	StatisticsWriter(String baseFilename, Procession procession, Event event) throws IOException {
+	GnuplotWriter(String baseFilename, Procession procession, Event event) throws IOException {
 		this.procession = procession;
 		this.baseFilename = baseFilename;
 		this.dataFilePath  = baseFilename + ".log";
@@ -65,7 +66,9 @@ public abstract class StatisticsWriter {
 	}
 
 	protected void writeGnuplotConfig(String template) {
-		writeGnuplotConfig(template, getGnuplotCustomFields());
+		Map<String, String> customFields = new HashMap<String, String>();
+		specifyGnuplotCustomFields(customFields);
+		writeGnuplotConfig(template, customFields);
 	}
 
 	private void writeGnuplotConfig(String template, Map<String, String> customFields) {
@@ -103,12 +106,11 @@ public abstract class StatisticsWriter {
 		}
 	}
 
-	protected abstract String getGnuplotTemplateName();
+	abstract protected void addOutputImageFilesToThisList(List<OutputImageFile> list);
 
-	protected Map<String, String> getGnuplotCustomFields() {
-		return new HashMap<String, String>();
-	}
+	abstract protected String getGnuplotTemplateName();
 
+	abstract protected void specifyGnuplotCustomFields(Map<String, String> map);
 
 	public static String replaceAll(String text, Map<String, String> params) {
 		return replaceAll(text, params, '%', '%');
@@ -182,16 +184,15 @@ public abstract class StatisticsWriter {
 	protected Writer dataWriter;
 	protected Writer gnuplotConfigWriter;
 
-
 	private static Log log;
 
 	public static void setLog(Log log) {
-		StatisticsWriter.log = log;
+		GnuplotWriter.log = log;
 	}
 
 	protected static Log getLog() {
 		if (log == null)
-			setLog(LogFactory.getLog(StatisticsWriter.class));
+			setLog(LogFactory.getLog(GnuplotWriter.class));
 		return log;
 	}
 

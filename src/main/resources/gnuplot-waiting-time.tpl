@@ -3,7 +3,7 @@ set timefmt '%Y-%m-%dT%H:%M:%S'
 set datafile sep '\t'
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%.png"
+set output "%PNG_FILE%"
 
 set xlabel "Position auf der Strecke (km)"
 

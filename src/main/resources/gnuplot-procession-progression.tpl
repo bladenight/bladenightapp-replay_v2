@@ -10,7 +10,7 @@ set format x "%H:%M"
 set ylabel "Position auf der Strecke (km)"
 
 set term pngcairo size 1200,900
-set output "%BASE_FILENAME%-speed.png"
+set output "%PNG_FILE_SPEED%"
 
 set palette defined ( -1 "white", 0 "red", 10 "yellow", 20 "green", 25 "green", 35 "purple")
 set cbrange [-1:35]
@@ -23,7 +23,7 @@ pos_only(x) = x > 0 ? x : 1/0
 plot '%DATA_FILE%' u 1:2:3 with image notitle
 
 
-set output "%BASE_FILENAME%-density.png"
+set output "%PNG_FILE_DENSITY%"
 
 set palette defined ( 0 "white", 1 "blue", 3 "yellow", 5 "red", 10 "purple")
 set cbrange [0:10]
