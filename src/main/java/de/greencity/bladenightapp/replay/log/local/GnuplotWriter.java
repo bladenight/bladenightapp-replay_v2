@@ -10,28 +10,22 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
-
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
-public abstract class GnuplotWriter {
+public abstract class GnuplotWriter extends ProcessionStatisticsWriter {
 
 	GnuplotWriter(String baseFilename, Procession procession, Event event) throws IOException {
-		this.procession = procession;
+		super(procession, event);
 		this.baseFilename = baseFilename;
 		this.dataFilePath  = baseFilename + ".log";
 		this.gnuplotConfigPath  = baseFilename + ".gp";
 		this.dataWriter = new FileWriter(dataFilePath);
 		this.gnuplotConfigWriter = new FileWriter(gnuplotConfigPath);
-		this.event = event;
 	}
 
-	public abstract void checkpoint(DateTime dateTime);
-
-	public void finish() {
+	public void finish()
+	{
 		writeGnuplotConfigFromResource();
 		try {
 			dataWriter.close();
@@ -46,7 +40,7 @@ public abstract class GnuplotWriter {
 			getLog().error("Failed to close writer: ",e);
 		}
 	}
-
+	
 	protected void writeDataLine(String line) {
 		try {
 			dataWriter.write(line + "\n");
@@ -164,18 +158,6 @@ public abstract class GnuplotWriter {
 		return ((long)(speed*10.0) / 10.0);
 	}
 
-	public Event getEvent() {
-		return event;
-	}
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-	protected Procession procession;
-	protected Event event;
-
-
 	protected String baseFilename;
 
 	protected String dataFilePath;
@@ -183,18 +165,6 @@ public abstract class GnuplotWriter {
 
 	protected Writer dataWriter;
 	protected Writer gnuplotConfigWriter;
-
-	private static Log log;
-
-	public static void setLog(Log log) {
-		GnuplotWriter.log = log;
-	}
-
-	protected static Log getLog() {
-		if (log == null)
-			setLog(LogFactory.getLog(GnuplotWriter.class));
-		return log;
-	}
 
 
 }

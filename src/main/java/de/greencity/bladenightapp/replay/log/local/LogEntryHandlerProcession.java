@@ -24,20 +24,23 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		procession = new Procession(controlledClock);
 		procession.setRoute(route);
 
-		this.writers = new ArrayList<GnuplotWriter>();
-		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
-		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
-		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
-		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
-		this.writers.add(new NumberOfUsersWriter(filePrefix + "-users", procession, event));
+		this.writers = new ArrayList<ProcessionStatisticsWriter>();
+		// this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
+		// this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
+		// this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
+		// this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
+		// this.writers.add(new NumberOfUsersWriter(filePrefix + "-users", procession, event));
+		this.writers.add(new JavascriptWriter(procession, event));
 	}
 
 	@Override
 	public void finish() {
-		for (GnuplotWriter writer : this.writers) {
+		for (ProcessionStatisticsWriter writer : this.writers) {
 			writer.finish();
-			writer.addOutputImageFilesToThisList(outputImageFileList);
-			System.out.println("size="+outputImageFileList.size());
+			// TODO refactor
+			if ( writer instanceof GnuplotWriter )
+				((GnuplotWriter)writer).addOutputImageFilesToThisList(outputImageFileList);
+			// System.out.println("size="+outputImageFileList.size());
 		}
 	}
 
@@ -54,7 +57,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 			collector.collect();
 			procession.compute();
 			lastPrintTime = logEntry.dateTime;
-			for (GnuplotWriter writer : this.writers) {
+			for (ProcessionStatisticsWriter writer : this.writers) {
 				writer.checkpoint(logEntry.dateTime);
 			}
 
@@ -68,9 +71,9 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		ParticipantCollector collector = new ParticipantCollector(procession);
 		collector.setMaxAbsoluteAge(maxAbsoluteAge);
 		collector.setMaxRelativeAgeFactor(maxRelativeAgeFactor);
-		
+
 		collector.setClock(controlledClock);
-		
+
 		return collector;
 	}
 
@@ -84,7 +87,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 	private Log log;
 	private DateTime lastPrintTime = null;
 	private ControlledClock controlledClock = new ControlledClock();
-	private List<GnuplotWriter> writers;
+	private List<ProcessionStatisticsWriter> writers;
 	private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
 
 	public void setLog(Log log) {

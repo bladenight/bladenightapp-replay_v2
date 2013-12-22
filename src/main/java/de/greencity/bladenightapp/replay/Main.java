@@ -21,8 +21,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.sun.tools.doclets.formats.html.markup.HtmlWriter;
-
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.events.Event.EventStatus;
 import de.greencity.bladenightapp.events.EventList;
@@ -121,8 +119,8 @@ public class Main {
 			if (commandLine.getOptionValue("timelapse") != null)
 				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
 			player.setLogEntries(logEntries);
-			// player.replay();
-			logEntryHandler.finish();
+			player.replay();
+			// logEntryHandler.finish();
 			outputImageFilesByEvent.put(event, logEntryHandler.getOutputImageFileList());
 		}
 		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(outputImageFilesByEvent).write();

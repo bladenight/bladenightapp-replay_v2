@@ -31,7 +31,7 @@ public class ProcessionProgressionWriter extends GnuplotWriter {
 			Segment segment = statistics.segments[routeSegment];
 			double speed = segment.speed;
 			double nParticipants = segment.nParticipants; 
-			if ( Double.isNaN(segment.speed) || Double.isInfinite(segment.speed) || segment.nParticipants <= 0 ) {
+			if ( Double.isNaN(speed) || Double.isInfinite(speed) || nParticipants <= 0 ) {
 				speed = -1;
 				nParticipants = 0;
 			}
