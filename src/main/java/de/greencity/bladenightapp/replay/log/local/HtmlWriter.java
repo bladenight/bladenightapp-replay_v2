@@ -48,7 +48,6 @@ public class HtmlWriter {
 
 	private void writeIndex() throws IOException {
 		FileWriter out =  new FileWriter("index.html");
-		out.write("<html>");
 		out.write( "<!doctype html>\n" );
 		out.write( "<html lang='en'>\n" );
 
@@ -124,17 +123,17 @@ public class HtmlWriter {
 		for ( OutputImageFile imageFile : getSortedOutputImageFiles(event)) {
 			out.write( "<tr>\n");
 			if ( index > 0 ) {
-				out.write( "<td>" + getHtmlLinkTo(list.get(index-1), imageFile.tag, null ) + "</td>");
+				out.write( "<td>" + getHtmlLinkTo(list.get(index-1), imageFile.tag, null ) + "</td>\n");
 			}
 			else {
-				out.write( "<td><div style=\"width: 75px\"></td>");
+				out.write( "<td><div style=\"width: 75px\"></td>\n");
 			}
 			out.write( "<td><img id=\"" + imageFile.tag + "\" src=\"" + imageFile.fileName  + "\"></td>\n" );
 			if ( index < list.size() - 1 ) {
-				out.write( "<td>" + getHtmlLinkTo(list.get(index+1), imageFile.tag, null ) + "</td>");
+				out.write( "<td>" + getHtmlLinkTo(list.get(index+1), imageFile.tag, null ) + "</td>\n");
 			}
 			else {
-				out.write( "<td>&nbsp;</td>");
+				out.write( "<td>&nbsp;</td>\n");
 			}
 			out.write( "</tr>\n" );
 		}
@@ -149,7 +148,7 @@ public class HtmlWriter {
 	}
 
 	private String getStartDateAsString(Event event) {
-		return event.getStartDateAsString("dd.MM.yyy");
+		return event.getStartDateAsString("yyyy-MM-dd");
 	}
 
 

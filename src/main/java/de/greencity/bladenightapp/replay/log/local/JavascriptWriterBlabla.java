@@ -9,9 +9,9 @@ import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.procession.Statistics;
 
-public class JavascriptWriter extends ProcessionStatisticsWriter {
+public class JavascriptWriterBlabla extends ProcessionStatisticsWriter {
 
-	public JavascriptWriter(Procession procession, Event event) {
+	public JavascriptWriterBlabla(Procession procession, Event event) {
 		super(procession, event);
 	}
 

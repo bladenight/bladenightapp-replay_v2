@@ -30,7 +30,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		// this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
 		// this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
 		// this.writers.add(new NumberOfUsersWriter(filePrefix + "-users", procession, event));
-		this.writers.add(new JavascriptWriter(procession, event));
+		this.writers.add(new JavascriptRouteWriter(procession, event));
 	}
 
 	@Override
