@@ -1,6 +1,6 @@
 package de.greencity.bladenightapp.replay.log.local;
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,12 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.greencity.bladenightapp.events.Event;
+import de.greencity.bladenightapp.replay.log.local.templates.EventProxy;
+import de.greencity.bladenightapp.replay.log.local.templates.TemplateProxy;
 
 public class HtmlWriter {
 	public HtmlWriter(Map<Event, List<OutputImageFile>> map) {
@@ -19,7 +24,8 @@ public class HtmlWriter {
 
 	public void write() throws IOException {
 		writeIndex();
-		// writeCss();
+		writeEventFiles();
+		writeCss();
 	}
 
 	public ArrayList<Event> getSortedEventList() {
@@ -28,7 +34,7 @@ public class HtmlWriter {
 				return e1.getStartDate().compareTo(e2.getStartDate());
 			}
 		};
-		
+
 		ArrayList<Event> list = new ArrayList<Event>(map.keySet());
 		Collections.sort(list, comparator);
 		return list;
@@ -44,113 +50,68 @@ public class HtmlWriter {
 		treeSet.addAll(map.get(event));
 		return treeSet;
 	}
-	
+
 
 	private void writeIndex() throws IOException {
-		FileWriter out =  new FileWriter("index.html");
-		out.write( "<!doctype html>\n" );
-		out.write( "<html lang='en'>\n" );
 
-		out.write( "<head>\n" );
-		out.write( "<meta charset='utf-8'>\n" );
-		out.write( "<title>Index</title>\n" );
-		out.write( "<link rel=\"stylesheet\" href=\"style.css\">\n" );
-		out.write( "</head>\n\n" );
+		List<EventProxy> eventProxies = new ArrayList<EventProxy>();
 
-		out.write( "<body>\n" );
-		out.write( "<table id=\"events-table\" >\n" );
-		out.write( "<thead>\n" );
-		out.write( "<tr>\n" );
-		out.write( "<td>Termin</td>\n" );
-		out.write( "<td>Strecke</td>\n" );
-		out.write( "<td>Skaters</td>\n" );
-		out.write( "</tr>\n" );
-		out.write( "</thead>\n" );
+		for (Event event : getSortedEventList()) {
+			eventProxies.add(new EventProxy(event));
+		}
+
+		TemplateProxy templateProxy = new TemplateProxy("index.ftl.html");
+		templateProxy.putData("events", eventProxies);
+		templateProxy.generate(new File("index.html"));
+	}
+
+	public void writeCss() throws IOException {
+		new TemplateProxy("style.ftl.css").generate(new File("style.css"));
+	}
+
+	private void writeEventFiles() {
+		List<Event> sortedEvents = getSortedEventList();
+		for (int index = 0 ; index < sortedEvents.size() ; index ++) {
+			writeFileForEvent(sortedEvents, index);
+		}
+	}
+
+	private void writeFileForEvent(List<Event> events, int index) {
+		TemplateProxy templateProxy = new TemplateProxy("event.ftl.html");
+
+		Event currentEvent = events.get(index);
+		EventProxy currentEventProxy = new EventProxy(currentEvent);
+		templateProxy.putData("currentEvent", currentEventProxy);
 		
-		ArrayList<Event> list = getSortedEventList();
-		for ( int index = 0 ; index < list.size() ; index++ ) {
-			Event event = list.get(index);
-			String htmlFileName = getHtmlFileNameForEvent(event);
-			String startTd = "<td><a href=\"" + htmlFileName + "\">";  
-			String endTd = "</a></td>\n";  
-			out.write( "<tr>\n");
-			out.write( startTd + getStartDateAsString(event) + endTd );
-			out.write( startTd + event.getRouteName() + endTd );
-			out.write( startTd + event.getParticipants() + endTd );
-			out.write( "</tr>\n" );
-			writeFileForEvent(list, index);
-		}
-		out.write( "</table>\n" );
-		out.write( "</body>\n\n" );
-
-		out.write( "</html>" );
-		out.close();
+		if ( index > 0  )
+			templateProxy.putData("previousEvent", new EventProxy(events.get(index-1)));
+		
+		if ( index < events.size() - 1 )
+			templateProxy.putData("nextEvent", new EventProxy(events.get(index+1)));
+		
+		List<String> images = new ArrayList<String>();
+		images.add("head-and-tail");
+		images.add("number-of-users");
+		images.add("procession-length");
+		images.add("procession-progression-speed");
+		images.add("procession-progression-density");
+		images.add("waiting-time");
+		templateProxy.putData("images", images);
+		
+		templateProxy.generate(new File(currentEventProxy.getDateIso() + ".html"));
 	}
-
-	//	public void writeCss() throws IOException {
-	//		FileWriter out =  new FileWriter("style.css");
-	//		out.write("table,th,td { border:1px solid black; }");
-	//		out.close();
-	//	}
-
-	private String getHtmlLinkTo(Event event, String tag, String text) {
-		if ( text == null )
-			text = getStartDateAsString(event);
-		if ( tag  == null ) 
-			tag = "";
-		if ( tag.length() > 0)
-			tag = "#" + tag;
-		return "<a href=\"" + getHtmlFileNameForEvent(event) + tag + "\">" + text + "</a>";
-	}
-	
-	private void writeFileForEvent(ArrayList<Event> list, int index) throws IOException {
-		Event event = list.get(index);
-		// System.out.println(getHtmlFileNameForEvent(event));
-		FileWriter out =  new FileWriter(getHtmlFileNameForEvent(event));
-		out.write("<html>");
-		out.write( "<!doctype html>\n" );
-		out.write( "<html lang='en'>\n" );
-
-		out.write( "<head>\n" );
-		out.write( "<meta charset='utf-8'>\n" );
-		out.write( "<title>Index</title>\n" );
-		out.write( "<link rel=\"stylesheet\" href=\"style.css\">\n" );
-		out.write( "</head>\n\n" );
-
-		out.write( "<body>\n" );
-		out.write( "<a href=\"index.html\">Zurueck zum Index</a>\n" );
-		out.write( "<table>\n" );
-		for ( OutputImageFile imageFile : getSortedOutputImageFiles(event)) {
-			out.write( "<tr>\n");
-			if ( index > 0 ) {
-				out.write( "<td>" + getHtmlLinkTo(list.get(index-1), imageFile.tag, null ) + "</td>\n");
-			}
-			else {
-				out.write( "<td><div style=\"width: 75px\"></td>\n");
-			}
-			out.write( "<td><img id=\"" + imageFile.tag + "\" src=\"" + imageFile.fileName  + "\"></td>\n" );
-			if ( index < list.size() - 1 ) {
-				out.write( "<td>" + getHtmlLinkTo(list.get(index+1), imageFile.tag, null ) + "</td>\n");
-			}
-			else {
-				out.write( "<td>&nbsp;</td>\n");
-			}
-			out.write( "</tr>\n" );
-		}
-		out.write( "</table>\n" );
-		out.write( "</body>\n" );
-		out.write( "</html>\n" );
-		out.close();
-	}
-
-	private String getHtmlFileNameForEvent(Event event) {
-		return getStartDateAsString(event) + ".html";
-	}
-
-	private String getStartDateAsString(Event event) {
-		return event.getStartDateAsString("yyyy-MM-dd");
-	}
-
 
 	private Map<Event, List<OutputImageFile>> map;
+
+	private static Log log;
+
+	public static void setLog(Log log) {
+		HtmlWriter.log = log;
+	}
+
+	protected static Log getLog() {
+		if (log == null)
+			setLog(LogFactory.getLog(HtmlWriter.class));
+		return log;
+	}
 }

@@ -55,7 +55,7 @@ public class Main {
 
 	private static void runLogFilePlayer()
 			throws URISyntaxException, IOException, InterruptedException, InconsistencyException {
-		
+
 		String urlOption = commandLine.getOptionValue("url");
 		String eventsDirOption = commandLine.getOptionValue("events-dir");
 		if ( urlOption != null ) {
@@ -69,10 +69,10 @@ public class Main {
 		}
 
 	}
-	
+
 	private static LogFilePlayer createPlayerFromOptions(LogEntryHandler logEntryHandler) throws IOException {
 		LogFilePlayer player = new LogFilePlayer(logEntryHandler);
-		
+
 		player.readLogEntries(new File(commandLine.getOptionValue("file")));
 
 		if (commandLine.getOptionValue("fromtime") != null)
@@ -81,10 +81,10 @@ public class Main {
 			player.setToDateTime(parseCommandLineDateString(commandLine.getOptionValue("totime")));
 		if (commandLine.getOptionValue("timelapse") != null)
 			player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
-		
+
 		return player;
 	}
-	
+
 	private static void runLogFilePlayerWithWampClient(String url) throws URISyntaxException, IOException, InterruptedException {
 		LogEntryHandler logEntryHandler;
 		logEntryHandler = new LogEntryHandlerWampClient(new URI(url));
@@ -106,10 +106,13 @@ public class Main {
 		logFile.load();
 		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
 		Map<Event, List<OutputImageFile>> outputImageFilesByEvent = new HashMap<Event, List<OutputImageFile>>();
+		int idx = 0;
 		for(Event event : eventList) {
 			System.out.println(event);
 			if ( event.getStatus() != EventStatus.CONFIRMED )
 				continue;
+			//			if ( idx++ > 1 )
+			//				continue;
 			String prefix = event.getStartDate().toString("yyyy-MM-dd");
 			Route route = routeStore.getRoute(event.getRouteName());
 			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(prefix, route, event);
@@ -120,7 +123,6 @@ public class Main {
 				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
 			player.setLogEntries(logEntries);
 			player.replay();
-			// logEntryHandler.finish();
 			outputImageFilesByEvent.put(event, logEntryHandler.getOutputImageFileList());
 		}
 		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(outputImageFilesByEvent).write();
@@ -251,9 +253,9 @@ public class Main {
 		DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm");
 		return dateFormatter.parseDateTime(dateString);
 	}
-	
+
 	final String DEFAULT_URL = "ws://localhost:8081";
-	
+
 	private static Log log;
 
 	public static void setLog(Log log) {
@@ -265,6 +267,6 @@ public class Main {
 			setLog(LogFactory.getLog(Main.class));
 		return log;
 	}
-	
+
 	static private CommandLine commandLine;
 }

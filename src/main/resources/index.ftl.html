@@ -1,0 +1,31 @@
+[#ftl]
+<!doctype html>
+<html lang='en'>
+<head>
+	<meta charset='utf-8'>
+	<title>Index</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<table id="events-table" >
+		<thead>
+			<tr>
+				<td>Termin</td>
+				<td>Strecke</td>
+				<td>Skaters</td>
+			</tr>
+		</thead>
+		<tbody>
+			[#list events as event]
+			<tr>
+				<td><a href="${event.href}">${event.dateUserString}</a></td>
+				<td><a href="${event.href}">${event.routeName}</a></td>
+				<td><a href="${event.href}">${event.participants}</a></td>
+			</tr>
+		  	[/#list]
+		</tbody>
+	</table>
+</body>
+
+</html>
