@@ -92,6 +92,7 @@ public class HtmlWriter {
 		List<String> images = new ArrayList<String>();
 		images.add("head-and-tail");
 		images.add("number-of-users");
+		images.add("speed-on-segments");
 		images.add("procession-length");
 		images.add("procession-progression-speed");
 		images.add("procession-progression-density");

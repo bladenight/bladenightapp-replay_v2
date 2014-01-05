@@ -48,6 +48,6 @@ public class NumberOfUsersWriter extends GnuplotWriter {
 	}
 
 	private String getPngFile() {
-		return baseFilename + "-users.png";
+		return baseFilename + ".png";
 	}
 }

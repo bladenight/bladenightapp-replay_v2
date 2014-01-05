@@ -29,7 +29,8 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
 		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
 		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
-		this.writers.add(new NumberOfUsersWriter(filePrefix + "-users", procession, event));
+		this.writers.add(new NumberOfUsersWriter(filePrefix + "-number-of-users", procession, event));
+		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
 		this.writers.add(new JavascriptRouteWriter(procession, event));
 	}
 
