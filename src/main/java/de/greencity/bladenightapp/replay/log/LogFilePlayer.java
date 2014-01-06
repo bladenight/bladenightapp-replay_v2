@@ -2,6 +2,7 @@ package de.greencity.bladenightapp.replay.log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +15,8 @@ import de.greencity.bladenightapp.time.Sleep;
 public class LogFilePlayer {
 	public LogFilePlayer(LogEntryHandler logEntryHandler) {
 		super();
-		this.logEntryHandler = logEntryHandler;
+		this.logEntryHandlers = new ArrayList<LogEntryHandler>();
+		this.logEntryHandlers.add(logEntryHandler);
 	}
 
 	public void readLogEntries(File file) throws IOException {
@@ -70,20 +72,27 @@ public class LogFilePlayer {
 
 			getLog().info("Current simulated time: " + new DateTime(currentSimulatedTime) );
 
-			try {
-				logEntryHandler.handleLogEntry(logEntry);
-			} catch (Exception e) {
-				getLog().error("Handler failed to process log entry " + logEntry, e);
+			for ( LogEntryHandler logEntryHandler : logEntryHandlers ) {
+				try {
+					logEntryHandler.handleLogEntry(logEntry);
+				} catch (Exception e) {
+					getLog().error("LogEntryHandler failed to process log entry " + logEntry, e);
+				}
 			}
 		}
-		logEntryHandler.finish();
+		for ( LogEntryHandler logEntryHandler : logEntryHandlers )
+			logEntryHandler.finish();
 	}
 	
+	public void addLogEntryHandler(LogEntryHandler logEntryHandler) {
+		logEntryHandlers.add(logEntryHandler);
+	}
+
 	private double timeLapseFactor = 1.0;
 	private DateTime fromDateTime;
 	private DateTime toDateTime;
 	private List<ParticipanLogFile.LogEntry> logEntries;
-	private LogEntryHandler logEntryHandler;
+	private List<LogEntryHandler> logEntryHandlers;
 
 
 	private Log log;

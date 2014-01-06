@@ -6,9 +6,10 @@
 		<title>Index</title>
 		<link rel="stylesheet" href="style.css">
 		
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDYKMcZpChdiltJ7R4tn_OJwlJAeRtXdEU&sensor=false&libraries=geometry"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDYKMcZpChdiltJ7R4tn_OJwlJAeRtXdEU&sensor=false&libraries=geometry,visualization"></script>
 		<script type="text/javascript" src="maplabel-compiled.js"></script>
 		<script type="text/javascript" src="${currentEvent.dateIso}-route.js"></script>
+		<script type="text/javascript" src="${currentEvent.dateIso}-heatmap.js"></script>
 		<script type="text/javascript" >
 		function createDistanceMarkers(map, routeNodes) {
 			var every = 1000
@@ -32,7 +33,7 @@
 		function initialize() {
 			var mapOptions = {
 				center: new google.maps.LatLng(48.132487, 11.5438976),
-				zoom: 14,
+				zoom: 13,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
 			map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
@@ -46,7 +47,22 @@
 			// console.log("setting overlay");
 
 			createDistanceMarkers(map, routeNodes);
+			createHeatMap(map);
 		}
+
+		function createHeatMap(map) {
+			  var pointArray = new google.maps.MVCArray(heatMapData);
+
+			  heatmap = new google.maps.visualization.HeatmapLayer({
+				    data: pointArray,
+				    radius: 0.0003,
+				    maxIntensity: 10,
+				    dissipating: false
+				  });
+
+			  heatmap.setMap(map);
+		}
+		
 		function createMarker(map, latlng, text) {
 			var marker = new MapLabel({
 				position:latlng,

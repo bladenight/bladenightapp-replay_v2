@@ -29,6 +29,7 @@ import de.greencity.bladenightapp.persistence.ListPersistor;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.LogFilePlayer;
 import de.greencity.bladenightapp.replay.log.ParticipanLogFile;
+import de.greencity.bladenightapp.replay.log.local.LogEntryHandlerParticipantHeatMap;
 import de.greencity.bladenightapp.replay.log.local.LogEntryHandlerProcession;
 import de.greencity.bladenightapp.replay.log.local.OutputImageFile;
 import de.greencity.bladenightapp.replay.log.wamp.LogEntryHandlerWampClient;
@@ -119,6 +120,7 @@ public class Main {
 			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 			player.setFromDateTime(event.getStartDate());
 			player.setToDateTime(event.getEndDate());
+			player.addLogEntryHandler(new LogEntryHandlerParticipantHeatMap(event));
 			if (commandLine.getOptionValue("timelapse") != null)
 				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
 			player.setLogEntries(logEntries);
