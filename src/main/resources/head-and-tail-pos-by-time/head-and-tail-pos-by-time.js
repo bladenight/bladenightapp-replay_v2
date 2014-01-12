@@ -23,7 +23,8 @@ HighchartsHelper.add({
 	          },
               labels: {
     			format: '{value:0.3f} km'
-		      }
+		      },
+		      min:0,
 	      },
 	      tooltip: {
 	    	    formatter: function() {

@@ -36,6 +36,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 //		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
 		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
 		this.writers.add(new HeadAndTailJsonWriter(basePath, procession, event));
+		this.writers.add(new SpeedByPos(basePath, procession, event));
 	}
 
 	@Override

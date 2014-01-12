@@ -19,7 +19,8 @@ HighchartsHelper.add({
 	      yAxis: {
 	          title: {
 	              text: 'Anzahl Benutzer'
-	          }
+	          },
+	          min:0
 	      },
 	      tooltip: {
 	    	    formatter: function() {

@@ -1,0 +1,6 @@
+[
+	<#list entries as entry>
+		[ ${entry.position?string("0")}, ${entry.speed?string("0.00")} ] <#if entry_has_next>,</#if>
+	</#list>
+]
+

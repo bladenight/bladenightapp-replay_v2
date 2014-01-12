@@ -74,6 +74,7 @@ public class HtmlWriter {
 		Utils.copyResourceTo("/jslibs/jquery-1.10.2.min.js", 							newOutputFile("jquery-1.10.2.min.js"));
 		Utils.copyResourceTo("/jslibs/maplabel-compiled.js", 							newOutputFile("maplabel-compiled.js"));
 		Utils.copyResourceTo("/users-by-time/users-by-time.js", 						newOutputFile("users-by-time.js"));
+		Utils.copyResourceTo("/speed-by-pos/speed-by-pos.js", 							newOutputFile("speed-by-pos.js"));
 		Utils.copyResourceTo("/head-and-tail-pos-by-time/head-and-tail-pos-by-time.js", newOutputFile("head-and-tail-pos-by-time.js"));
 	}
 
