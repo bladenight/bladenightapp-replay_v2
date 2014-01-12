@@ -39,7 +39,7 @@
 				      },
 				      chart: {
 				          type: 'spline',
-				          renderTo: 'container'
+				          renderTo: 'head-and-tail-by-time'
 				      },
 				      title: {
 				          text: 'Entwicklung der Spitze und des Schlusses mit der Zeit'
@@ -52,6 +52,11 @@
 				              text: 'Position'
 				          }
 				      },
+				      tooltip: {
+				    	    formatter: function() {
+				    	    	var dateStr = Highcharts.dateFormat('%H:%M', new Date(this.x));
+				    	        return dateStr + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: '+ this.y;
+				    	     }				      }
 				  };
 		chart = new Highcharts.Chart(options);
 	}
@@ -84,7 +89,7 @@
 		$.getJSON( "tail-pos-by-time.js", function( data ) {
 			console.log("here");
 			chart.addSeries({
-				name : 'Zugspitze',
+				name : 'Zugschluss',
 				color : 'red',
 				data: convertData(data)
 			})
@@ -98,7 +103,7 @@
 </head>
 
 <body>
-  <div id="container" style="width:100%; height:400px;"></div>
+  <div id="head-and-tail-by-time" style="width:100%; height:400px;"></div>
 </body>
 
 </html>
