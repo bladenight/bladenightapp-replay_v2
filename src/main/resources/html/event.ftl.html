@@ -3,14 +3,28 @@
 <html lang='en'>
 	<head>
 		<meta charset='utf-8'>
-		<title>Index</title>
+		<title>Blade Night Statistiken - ${currentEvent.dateUserString} - ${currentEvent.routeName}</title>
 		<link rel="stylesheet" href="style.css">
+
+		<script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
 		
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDYKMcZpChdiltJ7R4tn_OJwlJAeRtXdEU&sensor=false&libraries=geometry,visualization"></script>
-		<script type="text/javascript" src="maplabel-compiled.js"></script>
-		<script type="text/javascript" src="${currentEvent.dateIso}-route.js"></script>
-		<script type="text/javascript" src="${currentEvent.dateIso}-heatmap.js"></script>
+		<script type="text/javascript" src="../maplabel-compiled.js"></script>
+
+		<script type="text/javascript" src="../highcharts.js"></script>
+		<script type="text/javascript" src="../highcharts-helper.js"></script>
+
+		<script type="text/javascript">
+		$(function() {
+			HighchartsHelper.init();
+		});
+		</script>
+
+		<script type="text/javascript" src="../head-and-tail-pos-by-time.js"></script>
+		<script type="text/javascript" src="../users-by-time.js"></script>
+		
 		<script type="text/javascript" >
+
 		function createDistanceMarkers(map, routeNodes) {
 			var every = 1000
 			var next = every;
@@ -37,17 +51,26 @@
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
 			map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-			routeOverlay = new google.maps.Polyline({
-				path: routeNodes,
-				strokeColor: "#7000FF",
-				strokeOpacity: 0.3,
-				strokeWeight: 8,
-				map: map
-			});
 			// console.log("setting overlay");
 
-			createDistanceMarkers(map, routeNodes);
-			createHeatMap(map);
+			// createHeatMap(map);
+			
+			var url = "route.json";
+			$.getJSON( url, function( data ) {
+				data = $.map(data, function(c,index) { return [new google.maps.LatLng(c.lat, c.lon)] });
+				routeOverlay = new google.maps.Polyline({
+					path: data,
+					strokeColor: "#7000FF",
+					strokeOpacity: 0.3,
+					strokeWeight: 8,
+					map: map
+				});
+				createDistanceMarkers(map, data);
+			})
+			.fail(function( jqxhr, textStatus, error ) {
+				var err = textStatus + ", " + error;
+				console.log( "Request for " + url + " failed: " + err )
+			});
 		}
 
 		function createHeatMap(map) {
@@ -75,19 +98,23 @@
 	</head>
 	
 	<body>
-		<a href="index.html">Zurueck zum Index</a>
+		<a href="../index.html">Zurück zum Index</a>
+
+		<div id="head-and-tail-by-time" style="width: 1000px; height: 700px;"></div>
+		<div id="users-by-time" 		style="width: 1000px; height: 700px;"></div>
+
 		<table>
 		
 			[#list images as image]
 			<tr>
 				[#if previousEvent??]
-					<td><a href="${previousEvent.href}#${image}">${previousEvent.dateUserString}</a></td>
+					<td><a href="../${previousEvent.href}#${image}">${previousEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]
 				<td><img id="${image}" src="${currentEvent.dateIso}-${image}.png"></td>
 				[#if nextEvent??]
-					<td><a href="${nextEvent.href}#${image}">${nextEvent.dateUserString}</a></td>
+					<td><a href="../${nextEvent.href}#${image}">${nextEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]
@@ -96,15 +123,15 @@
 
 			<tr>
 				[#if previousEvent??]
-					<td><a href="${previousEvent.href}#map_canvas">${previousEvent.dateUserString}</a></td>
+					<td><a href="../${previousEvent.href}#map_canvas">${previousEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]
-				<td width="1200px" height="900px">
+				<td width="1000px" height="700px">
 					<div id="map_canvas" style="width:100%; height:100%;"></div>
 				</td>
 				[#if nextEvent??]
-					<td><a href="${nextEvent.href}#map_canvas">${nextEvent.dateUserString}</a></td>
+					<td><a href="../${nextEvent.href}#map_canvas">${nextEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]

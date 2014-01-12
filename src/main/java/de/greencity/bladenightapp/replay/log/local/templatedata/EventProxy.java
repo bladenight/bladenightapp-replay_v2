@@ -1,4 +1,4 @@
-package de.greencity.bladenightapp.replay.log.local.templates;
+package de.greencity.bladenightapp.replay.log.local.templatedata;
 
 import de.greencity.bladenightapp.events.Event;
 
@@ -14,7 +14,7 @@ public class EventProxy {
 		return event.getStartDateAsString("yyyy-MM-dd");
 	}
 	public String getHref() {
-		return getDateIso() + ".html";
+		return getDateIso() + "/index.html";
 	}
 	public String getRouteName() {
 		return event.getRouteName();

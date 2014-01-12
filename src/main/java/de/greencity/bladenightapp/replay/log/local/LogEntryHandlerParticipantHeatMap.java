@@ -7,7 +7,7 @@ import java.util.List;
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.ParticipanLogFile.LogEntry;
-import de.greencity.bladenightapp.replay.log.local.templates.TemplateProxy;
+import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
 public class LogEntryHandlerParticipantHeatMap implements LogEntryHandler {
 

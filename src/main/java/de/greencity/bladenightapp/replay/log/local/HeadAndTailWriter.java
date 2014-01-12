@@ -44,5 +44,4 @@ public class HeadAndTailWriter extends GnuplotWriter {
 	private String getPngFile() {
 		return baseFilename + ".png";
 	}
-
 }

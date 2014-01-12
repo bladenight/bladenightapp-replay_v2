@@ -112,8 +112,8 @@ public class Main {
 			System.out.println(event);
 			if ( event.getStatus() != EventStatus.CONFIRMED )
 				continue;
-			//			if ( idx++ > 1 )
-			//				continue;
+			if ( idx++ > 2 )
+				continue;
 			String prefix = event.getStartDate().toString("yyyy-MM-dd");
 			Route route = routeStore.getRoute(event.getRouteName());
 			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(prefix, route, event);
@@ -127,7 +127,8 @@ public class Main {
 			player.replay();
 			outputImageFilesByEvent.put(event, logEntryHandler.getOutputImageFileList());
 		}
-		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(outputImageFilesByEvent).write();
+		File basePath = new File("output-2013");
+		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(basePath, outputImageFilesByEvent).write();
 	}
 
 	private static void runLogFilePlayerLocal() throws InterruptedException, IOException {

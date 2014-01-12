@@ -1,4 +1,4 @@
-package de.greencity.bladenightapp.replay.log.local.templates;
+package de.greencity.bladenightapp.replay.log.local.templatedata;
 
 import java.io.File;
 import java.io.FileWriter;

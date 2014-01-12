@@ -1,8 +1,9 @@
 package de.greencity.bladenightapp.replay.log.local;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -10,11 +11,12 @@ import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.Statistics;
 import de.greencity.bladenightapp.procession.Statistics.Segment;
+import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class NumberOfUsersWriter extends GnuplotWriter {
+public class NumberOfUsersWriter extends ProcessionStatisticsWriterNew {
 
-	NumberOfUsersWriter(String baseFilename, Procession procession, Event event) throws IOException {
-		super(baseFilename, procession, event);
+	NumberOfUsersWriter(File basePath, Procession procession, Event event) throws IOException {
+		super(basePath, procession, event);
 	}
 
 	@Override
@@ -26,28 +28,34 @@ public class NumberOfUsersWriter extends GnuplotWriter {
 				n += segment.nParticipants;
 			}
 		}
-		writeDataLine(
-				dateTime + "\t" +
-						n
-				);
+		entries.add(new OutputEntry(dateTime.toString(), n));
 	}
 
 	@Override
-	protected String getGnuplotTemplateName() {
-		return "gnuplot-number-of-users.tpl";
-	}
+	public void finish() {
+		TemplateProxy templateProxy = new TemplateProxy("users-by-time/users-by-time.ftl.json");
+		templateProxy.putData("entries", entries);
+		String targetFileName = "users-by-time.json";
+		File targetFile = new File(basePath, targetFileName);
+		templateProxy.generate(targetFile);
+	} 
 
-	@Override
-	protected void addOutputImageFilesToThisList(List<OutputImageFile> list) {
-		list.add(new OutputImageFile(getPngFile(), "number-of-users", 20));
-	}
+	static public class OutputEntry {
+		public OutputEntry(String dateTimeStr, int users) {
+			this.dateTimeStr = dateTimeStr;
+			this.users = users;;
+		}
+		public String dateTimeStr;
+		public int users;
+		public String getDateTimeStr() {
+			return dateTimeStr;
+		}
+		public double getUsers() {
+			return users;
+		} 
+	};
 
-	@Override
-	protected void specifyGnuplotCustomFields(Map<String, String> map) {
-		map.put("PNG_FILE", getPngFile());
-	}
+	private List<OutputEntry> entries = new ArrayList<OutputEntry>();
 
-	private String getPngFile() {
-		return baseFilename + ".png";
-	}
+
 }

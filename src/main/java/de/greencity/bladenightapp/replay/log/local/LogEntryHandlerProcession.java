@@ -1,5 +1,6 @@
 package de.greencity.bladenightapp.replay.log.local;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,23 +25,26 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		procession = new Procession(controlledClock);
 		procession.setRoute(route);
 
-		this.writers = new ArrayList<ProcessionStatisticsWriter>();
-		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
-		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
-		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
-		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
-		this.writers.add(new NumberOfUsersWriter(filePrefix + "-number-of-users", procession, event));
-		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
-		this.writers.add(new JavascriptRouteWriter(procession, event));
+		File basePath = new File("output-2013", event.getStartDateAsString("yyyy-MM-dd"));
+		basePath.mkdirs();
+		this.writers = new ArrayList<ProcessionStatisticsWriterNew>();
+//		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
+//		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
+//		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
+//		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
+		this.writers.add(new NumberOfUsersWriter(basePath, procession, event));
+//		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
+		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
+		this.writers.add(new HeadAndTailJsonWriter(basePath, procession, event));
 	}
 
 	@Override
 	public void finish() {
-		for (ProcessionStatisticsWriter writer : this.writers) {
+		for (ProcessionStatisticsWriterNew writer : this.writers) {
 			writer.finish();
 			// TODO refactor
-			if ( writer instanceof GnuplotWriter )
-				((GnuplotWriter)writer).addOutputImageFilesToThisList(outputImageFileList);
+//			if ( writer instanceof GnuplotWriter )
+//				((GnuplotWriter)writer).addOutputImageFilesToThisList(outputImageFileList);
 			// System.out.println("size="+outputImageFileList.size());
 		}
 	}
@@ -58,7 +62,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 			collector.collect();
 			procession.compute();
 			lastPrintTime = logEntry.dateTime;
-			for (ProcessionStatisticsWriter writer : this.writers) {
+			for (ProcessionStatisticsWriterNew writer : this.writers) {
 				writer.checkpoint(logEntry.dateTime);
 			}
 
@@ -88,7 +92,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 	private Log log;
 	private DateTime lastPrintTime = null;
 	private ControlledClock controlledClock = new ControlledClock();
-	private List<ProcessionStatisticsWriter> writers;
+	private List<ProcessionStatisticsWriterNew> writers;
 	private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
 
 	public void setLog(Log log) {
