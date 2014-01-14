@@ -75,6 +75,7 @@ public class HtmlWriter {
 		Utils.copyResourceTo("/jslibs/maplabel-compiled.js", 							newOutputFile("maplabel-compiled.js"));
 		Utils.copyResourceTo("/users-by-time/users-by-time.js", 						newOutputFile("users-by-time.js"));
 		Utils.copyResourceTo("/speed-by-pos/speed-by-pos.js", 							newOutputFile("speed-by-pos.js"));
+		Utils.copyResourceTo("/waiting-time-by-pos/waiting-time-by-pos.js", 			newOutputFile("waiting-time-by-pos.js"));
 		Utils.copyResourceTo("/head-and-tail-pos-by-time/head-and-tail-pos-by-time.js", newOutputFile("head-and-tail-pos-by-time.js"));
 	}
 

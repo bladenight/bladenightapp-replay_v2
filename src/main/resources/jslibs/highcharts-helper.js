@@ -4,9 +4,9 @@ HighchartsHelper = {
 	    Highcharts.setOptions({
 	        lang: {
 	                loading: 'Laden...',
-	                months: ['Januar', 'Februar', 'M둹z', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'October', 'November', 'Dezember'],
+	                months: ['Januar', 'Februar', 'M채rz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'October', 'November', 'Dezember'],
 	                weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
-	                shortMonths: ['Jan', 'Feb', 'M둹', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dez'],
+	                shortMonths: ['Jan', 'Feb', 'M채r', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dez'],
 	                exportButtonTitle: "Exportieren",
 	                printButtonTitle: "Ausdrucken",
 	                rangeSelectorFrom: "Von:",
@@ -16,8 +16,8 @@ HighchartsHelper = {
 	                downloadJPEG: 'Als JPEG herunterladen',
 	                downloadPDF: 'Als PDF herunterladen',
 	                downloadSVG: 'Als SVG herunterladen',
-	                resetZoom: "Zoom zur웒ksetzen",
-	                resetZoomTitle: "Zoom zur웒ksetzen",
+	                resetZoom: "Zoom zur체cksetzen",
+	                resetZoomTitle: "Zoom zur체cksetzen",
 	                thousandsSep: ".",
 	                decimalPoint: ','
 	        	},

@@ -4,10 +4,10 @@ HighchartsHelper.add({
 	plotOptions: {
 	      chart: {
 	          type: 'spline',
-	          renderTo: 'speed-by-pos'
+	          renderTo: 'waiting-time-by-pos'
 	      },
 	      title: {
-	          text: 'Durschnitliche Geschwindigkeit auf der Strecke'
+	          text: 'Wartezeit auf der Strecke'
 	      },
 	      xAxis: {
 	          type: 'datetime',
@@ -19,32 +19,31 @@ HighchartsHelper.add({
 	      },
 	      yAxis: {
 	          title: {
-	              text: 'Geschwindigkeit'
+	              text: 'Wartezeit'
 	          },
               labels: {
-    			format: '{value:2.0f} km/h'
+    			format: '{value:2.0f} min'
 		      },
 	          min: 0,
 	          max: 30,
 	      },
 	      tooltip: {
 	    	    formatter: function() {
-	    	        return this.x + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + Highcharts.numberFormat(this.value,0) + ' km/h';
+	    	        return this.x + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + Highcharts.numberFormat(this.value,0) + ' min';
 	  			}
 	      }
 	  },
 	
 	sources : [
 		           	{
-		           		url: "speed-by-pos.json",
+		           		url: "waiting-time-by-pos.json",
 		           		serieOptions: {
-		    				name : 'Geschwindigkeit',
-		    				color : 'green',
+		    				name : 'Wartezeit',
+		    				color : 'firebrick',
     				        marker: {
 					            enabled: false
 							}
 		    			},
-		    			entryConverter: function(data) { return [[data[0] / 1000.0,data[1]]] } 
 		           	},
 				]
 })

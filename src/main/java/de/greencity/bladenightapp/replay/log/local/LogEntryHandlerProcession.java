@@ -30,13 +30,13 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		this.writers = new ArrayList<ProcessionStatisticsWriterNew>();
 //		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
 //		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
-//		this.writers.add(new WaitingTimeWriter(filePrefix + "-waiting-time", procession, event));
 //		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
 		this.writers.add(new NumberOfUsersWriter(basePath, procession, event));
 //		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
 		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
 		this.writers.add(new HeadAndTailJsonWriter(basePath, procession, event));
 		this.writers.add(new SpeedByPos(basePath, procession, event));
+		this.writers.add(new WaitingTimeByPos(basePath, procession, event));
 	}
 
 	@Override

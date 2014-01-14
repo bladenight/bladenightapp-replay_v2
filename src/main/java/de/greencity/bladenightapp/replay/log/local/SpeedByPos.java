@@ -50,6 +50,9 @@ public class SpeedByPos extends ProcessionStatisticsWriterNew {
 	@Override
 	public void finish() {
 		SegmentedLinearRoute segmentedLinearRoute = new SegmentedLinearRoute(segments.length, procession.getRoute().getLength());
+
+		List<OutputEntry> entries = new ArrayList<OutputEntry>();
+
 		for (int i = 0 ; i < segments.length ; i++) {
 			double pos = segmentedLinearRoute.getPositionOfSegmentStart(i);
 			MedianFinder finder = segments[i].medianFinder;
@@ -83,8 +86,6 @@ public class SpeedByPos extends ProcessionStatisticsWriterNew {
 			return speed;
 		} 
 	};
-
-	private List<OutputEntry> entries = new ArrayList<OutputEntry>();
 
 	private static class Segment {
 		Segment() {
