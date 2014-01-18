@@ -2,6 +2,7 @@ package de.greencity.bladenightapp.replay.log.local;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.googlecode.jatl.Html;
 
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.replay.log.local.templatedata.EventProxy;
@@ -100,18 +103,54 @@ public class HtmlWriter {
 		if ( index < events.size() - 1 )
 			templateProxy.putData("nextEvent", new EventProxy(events.get(index+1)));
 
-		List<String> images = new ArrayList<String>();
-		images.add("head-and-tail");
-		images.add("number-of-users");
-		images.add("speed-on-segments");
-		images.add("procession-length");
-		images.add("procession-progression-speed");
-		images.add("procession-progression-density");
-		images.add("waiting-time");
-		templateProxy.putData("images", images);
+		List<GraphItem> graphItems = new ArrayList<GraphItem>();
+		graphItems.add(new GraphItem().div("head-and-tail-by-time")); 
+		graphItems.add(new GraphItem().div("users-by-time")); 
+		graphItems.add(new GraphItem().div("speed-by-pos")); 
+		graphItems.add(new GraphItem().div("waiting-time-by-pos")); 
+		graphItems.add(new GraphItem().div("head-and-tail-by-time")); 
+		graphItems.add(new GraphItem().img("procession-progression-speed")); 
+		graphItems.add(new GraphItem().img("procession-progression-density")); 
+		templateProxy.putData("graphItems", graphItems);
 
 		templateProxy.generate(newOutputFile(currentEventProxy.getDateIso() + "/index.html"));
 	}
+
+	public static class GraphItem {
+		public String getHtml() {
+			return this.html;
+		}
+		public String getId() {
+			return this.id;
+		}
+		public GraphItem div(final String id) {
+			StringWriter writer = new StringWriter();
+
+			new Html(writer) {{
+				div().attr("id", id, "style", "width: 1000px; height: 700px;");
+				done();
+			}
+			};
+			this.id = id;
+			this.html = writer.getBuffer().toString();
+			return this;
+		}
+		private GraphItem img(final String id) {
+			StringWriter writer = new StringWriter();
+
+			new Html(writer) {{
+				img().attr("id", id, "href", id+".png");
+				done();
+			}
+			};
+			this.id = id;
+			this.html = writer.getBuffer().toString();
+			return this;
+		}
+		private String id;
+		private String html;
+	}
+	
 
 	private File newOutputFile(String name) {
 		return new File(basePath, name);

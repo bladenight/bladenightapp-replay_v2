@@ -13,9 +13,9 @@ import de.greencity.bladenightapp.procession.Statistics;
 import de.greencity.bladenightapp.procession.Statistics.Segment;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class NumberOfUsersWriter extends ProcessionStatisticsWriterNew {
+public class UsersByTime extends ProcessionStatisticsWriter {
 
-	NumberOfUsersWriter(File basePath, Procession procession, Event event) throws IOException {
+	UsersByTime(File basePath, Procession procession, Event event) throws IOException {
 		super(basePath, procession, event);
 	}
 

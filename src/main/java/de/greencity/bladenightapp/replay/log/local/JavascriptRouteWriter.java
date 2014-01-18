@@ -12,7 +12,7 @@ import de.greencity.bladenightapp.replay.log.local.templatedata.LatLongProxy;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 import de.greencity.bladenightapp.routes.Route.LatLong;
 
-public class JavascriptRouteWriter extends ProcessionStatisticsWriterNew {
+public class JavascriptRouteWriter extends ProcessionStatisticsWriter {
 
 	public JavascriptRouteWriter(File basePath, Procession procession, Event event) {
 		super(basePath, procession, event);

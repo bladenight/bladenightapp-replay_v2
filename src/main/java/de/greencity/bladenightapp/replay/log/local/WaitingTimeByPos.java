@@ -12,7 +12,7 @@ import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class WaitingTimeByPos extends ProcessionStatisticsWriterNew {
+public class WaitingTimeByPos extends ProcessionStatisticsWriter {
 
 	WaitingTimeByPos(File basePath, Procession procession, Event event) throws IOException {
 		super(basePath, procession, event);

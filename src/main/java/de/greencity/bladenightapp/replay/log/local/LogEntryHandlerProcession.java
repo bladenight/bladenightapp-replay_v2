@@ -27,21 +27,21 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 
 		File basePath = new File("output-2013", event.getStartDateAsString("yyyy-MM-dd"));
 		basePath.mkdirs();
-		this.writers = new ArrayList<ProcessionStatisticsWriterNew>();
+		this.writers = new ArrayList<ProcessionStatisticsWriter>();
 //		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
 //		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
 //		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
-		this.writers.add(new NumberOfUsersWriter(basePath, procession, event));
+		this.writers.add(new UsersByTime(basePath, procession, event));
 //		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
 		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
-		this.writers.add(new HeadAndTailJsonWriter(basePath, procession, event));
+		this.writers.add(new HeadAndTailPosByTime(basePath, procession, event));
 		this.writers.add(new SpeedByPos(basePath, procession, event));
 		this.writers.add(new WaitingTimeByPos(basePath, procession, event));
 	}
 
 	@Override
 	public void finish() {
-		for (ProcessionStatisticsWriterNew writer : this.writers) {
+		for (ProcessionStatisticsWriter writer : this.writers) {
 			writer.finish();
 			// TODO refactor
 //			if ( writer instanceof GnuplotWriter )
@@ -63,7 +63,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 			collector.collect();
 			procession.compute();
 			lastPrintTime = logEntry.dateTime;
-			for (ProcessionStatisticsWriterNew writer : this.writers) {
+			for (ProcessionStatisticsWriter writer : this.writers) {
 				writer.checkpoint(logEntry.dateTime);
 			}
 
@@ -93,7 +93,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 	private Log log;
 	private DateTime lastPrintTime = null;
 	private ControlledClock controlledClock = new ControlledClock();
-	private List<ProcessionStatisticsWriterNew> writers;
+	private List<ProcessionStatisticsWriter> writers;
 	private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
 
 	public void setLog(Log log) {

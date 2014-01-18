@@ -1,5 +1,4 @@
 $(function() {
-console.log("here");
 HighchartsHelper.add({
 	plotOptions: {
 	      chart: {
@@ -29,7 +28,7 @@ HighchartsHelper.add({
 	      },
 	      tooltip: {
 	    	    formatter: function() {
-	    	        return this.x + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + Highcharts.numberFormat(this.value,0) + ' min';
+	    	        return this.x + 'm <br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + this.y + ' min';
 	  			}
 	      }
 	  },

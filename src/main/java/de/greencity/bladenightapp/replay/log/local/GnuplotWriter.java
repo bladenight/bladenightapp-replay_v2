@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
-public abstract class GnuplotWriter extends ProcessionStatisticsWriter {
+public abstract class GnuplotWriter extends ProcessionStatisticsWriterDeprecated {
 
 	GnuplotWriter(String baseFilename, Procession procession, Event event) throws IOException {
 		super(procession, event);
@@ -52,7 +52,7 @@ public abstract class GnuplotWriter extends ProcessionStatisticsWriter {
 	protected void writeGnuplotConfigFromResource() {
 		String template = "";
 		try {
-			template = readTextFileFromResource(HeadAndTailWriter.class, getGnuplotTemplateName());
+			template = readTextFileFromResource(GnuplotWriter.class, getGnuplotTemplateName());
 		} catch (IOException e) {
 			getLog().error("Failed to read template:" , e);
 		}

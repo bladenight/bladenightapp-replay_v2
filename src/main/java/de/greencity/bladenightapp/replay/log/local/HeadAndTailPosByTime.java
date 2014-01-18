@@ -10,9 +10,9 @@ import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class HeadAndTailJsonWriter extends ProcessionStatisticsWriterNew {
+public class HeadAndTailPosByTime extends ProcessionStatisticsWriter {
 
-	public HeadAndTailJsonWriter(File basePath, Procession procession, Event event) {
+	public HeadAndTailPosByTime(File basePath, Procession procession, Event event) {
 		super(basePath, procession, event);
 	}
 

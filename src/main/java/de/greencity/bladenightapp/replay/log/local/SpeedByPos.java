@@ -14,7 +14,7 @@ import de.greencity.bladenightapp.procession.SegmentedLinearRoute;
 import de.greencity.bladenightapp.procession.Statistics;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class SpeedByPos extends ProcessionStatisticsWriterNew {
+public class SpeedByPos extends ProcessionStatisticsWriter {
 
 	SpeedByPos(File basePath, Procession procession, Event event) throws IOException {
 		super(basePath, procession, event);

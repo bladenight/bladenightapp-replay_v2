@@ -4,8 +4,8 @@
 	<head>
 		<meta charset='utf-8'>
 		<title>Blade Night Statistiken - ${currentEvent.dateUserString} - ${currentEvent.routeName}</title>
-		<link rel="stylesheet" href="style.css">
-
+<!-- 		<link rel="stylesheet" href="style.css">
+ -->
 		<script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
 		
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDYKMcZpChdiltJ7R4tn_OJwlJAeRtXdEU&sensor=false&libraries=geometry,visualization"></script>
@@ -102,23 +102,23 @@
 	<body>
 		<a href="../index.html">Zurück zum Index</a>
 
-		<div id="head-and-tail-by-time" style="width: 1000px; height: 700px;"></div>
+<!-- 		<div id="head-and-tail-by-time" style="width: 1000px; height: 700px;"></div>
 		<div id="users-by-time" 		style="width: 1000px; height: 700px;"></div>
 		<div id="speed-by-pos" 			style="width: 1000px; height: 700px;"></div>
 		<div id="waiting-time-by-pos"	style="width: 1000px; height: 700px;"></div>
-
+ -->
 		<table>
 		
-			[#list images as image]
+			[#list graphItems as item]
 			<tr>
 				[#if previousEvent??]
-					<td><a href="../${previousEvent.href}#${image}">${previousEvent.dateUserString}</a></td>
+					<td><a href="../${previousEvent.href}#${item.id}">${previousEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]
-				<td><img id="${image}" src="${currentEvent.dateIso}-${image}.png"></td>
+				<td>${item.html}</td>
 				[#if nextEvent??]
-					<td><a href="../${nextEvent.href}#${image}">${nextEvent.dateUserString}</a></td>
+					<td><a href="../${nextEvent.href}#${item.id}">${nextEvent.dateUserString}</a></td>
 				[#else]
 					<td></td>
 				[/#if]

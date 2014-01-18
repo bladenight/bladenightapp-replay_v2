@@ -1,7 +1,5 @@
 package de.greencity.bladenightapp.replay.log.local;
 
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -9,9 +7,12 @@ import org.joda.time.DateTime;
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
-public abstract class ProcessionStatisticsWriterNew {
-	public ProcessionStatisticsWriterNew(File basePath, Procession procession, Event event) {
-		this.basePath = basePath;
+public abstract class ProcessionStatisticsWriterDeprecated {
+	public ProcessionStatisticsWriterDeprecated() {
+		super();
+	}
+
+	public ProcessionStatisticsWriterDeprecated(Procession procession, Event event) {
 		this.procession = procession;
 		this.event = event;
 	}
@@ -28,20 +29,11 @@ public abstract class ProcessionStatisticsWriterNew {
 		this.event = event;
 	}
 
-	protected File newOutputFile(String name) {
-		return new File(basePath, name);
-	}
-
-
 	protected Event event;
-	protected File basePath;
-	protected Procession procession;
-
-
 	private static Log log;
 
 	public static void setLog(Log log) {
-		ProcessionStatisticsWriterNew.log = log;
+		ProcessionStatisticsWriterDeprecated.log = log;
 	}
 
 	protected static Log getLog() {
@@ -49,5 +41,8 @@ public abstract class ProcessionStatisticsWriterNew {
 			setLog(LogFactory.getLog(GnuplotWriter.class));
 		return log;
 	}
+
+	protected Procession procession;
+
 
 }

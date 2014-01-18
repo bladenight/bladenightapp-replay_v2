@@ -1,5 +1,4 @@
 $(function() {
-console.log("here");
 HighchartsHelper.add({
 	plotOptions: {
 	      chart: {
