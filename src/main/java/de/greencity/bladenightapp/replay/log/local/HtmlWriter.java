@@ -77,6 +77,7 @@ public class HtmlWriter {
 		Utils.copyResourceTo("/jslibs/jquery-1.10.2.min.js", 							newOutputFile("jquery-1.10.2.min.js"));
 		Utils.copyResourceTo("/jslibs/maplabel-compiled.js", 							newOutputFile("maplabel-compiled.js"));
 		Utils.copyResourceTo("/users-by-time/users-by-time.js", 						newOutputFile("users-by-time.js"));
+		Utils.copyResourceTo("/length-by-time/length-by-time.js", 						newOutputFile("length-by-time.js"));
 		Utils.copyResourceTo("/speed-by-pos/speed-by-pos.js", 							newOutputFile("speed-by-pos.js"));
 		Utils.copyResourceTo("/waiting-time-by-pos/waiting-time-by-pos.js", 			newOutputFile("waiting-time-by-pos.js"));
 		Utils.copyResourceTo("/head-and-tail-pos-by-time/head-and-tail-pos-by-time.js", newOutputFile("head-and-tail-pos-by-time.js"));
@@ -105,10 +106,10 @@ public class HtmlWriter {
 
 		List<GraphItem> graphItems = new ArrayList<GraphItem>();
 		graphItems.add(new GraphItem().div("head-and-tail-by-time")); 
+		graphItems.add(new GraphItem().div("length-by-time")); 
 		graphItems.add(new GraphItem().div("users-by-time")); 
 		graphItems.add(new GraphItem().div("speed-by-pos")); 
 		graphItems.add(new GraphItem().div("waiting-time-by-pos")); 
-		graphItems.add(new GraphItem().div("head-and-tail-by-time")); 
 		graphItems.add(new GraphItem().img("procession-progression-speed")); 
 		graphItems.add(new GraphItem().img("procession-progression-density")); 
 		templateProxy.putData("graphItems", graphItems);

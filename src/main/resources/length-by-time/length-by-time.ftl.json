@@ -1,0 +1,6 @@
+[
+	<#list entries as entry>
+		[ "${entry.dateTimeStr}",${entry.length?string("0")} ] <#if entry_has_next>,</#if>
+	</#list>
+]
+

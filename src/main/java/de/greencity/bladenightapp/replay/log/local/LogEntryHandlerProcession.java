@@ -28,15 +28,14 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		File basePath = new File("output-2013", event.getStartDateAsString("yyyy-MM-dd"));
 		basePath.mkdirs();
 		this.writers = new ArrayList<ProcessionStatisticsWriter>();
-//		this.writers.add(new HeadAndTailWriter(filePrefix + "-head-and-tail", procession, event));
 //		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
 //		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
 		this.writers.add(new UsersByTime(basePath, procession, event));
-//		this.writers.add(new SpeedOnSegmentsWriter(filePrefix + "-speed-on-segments", procession, event));
 		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
 		this.writers.add(new HeadAndTailPosByTime(basePath, procession, event));
 		this.writers.add(new SpeedByPos(basePath, procession, event));
 		this.writers.add(new WaitingTimeByPos(basePath, procession, event));
+		this.writers.add(new LengthByTime(basePath, procession, event));
 	}
 
 	@Override

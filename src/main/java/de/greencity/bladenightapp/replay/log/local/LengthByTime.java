@@ -10,48 +10,47 @@ import org.joda.time.DateTime;
 import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 import de.greencity.bladenightapp.procession.Statistics;
-import de.greencity.bladenightapp.procession.Statistics.Segment;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
-public class UsersByTime extends ProcessionStatisticsWriter {
+public class LengthByTime extends ProcessionStatisticsWriter {
 
-	UsersByTime(File basePath, Procession procession, Event event) throws IOException {
+	LengthByTime(File basePath, Procession procession, Event event) throws IOException {
 		super(basePath, procession, event);
 	}
 
 	@Override
 	public void checkpoint(DateTime dateTime) {
 		Statistics statistics = procession.getStatistics();
-		int n = 0;
-		if (statistics != null ) {
-			for (Segment segment : statistics.segments ) {
-				n += segment.nParticipants;
-			}
+		if ( statistics == null ) {
+			getLog().debug("No statistics available");
+			return;
 		}
-		entries.add(new OutputEntry(dateTime.toString(), n));
+		if ( procession.getTailPosition() >= procession.getHeadPosition())
+			return;
+		entries.add(new OutputEntry(dateTime.toString(), (int)(procession.getHeadPosition() - procession.getTailPosition())));
 	}
 
 	@Override
 	public void finish() {
-		TemplateProxy templateProxy = new TemplateProxy("users-by-time/users-by-time.ftl.json");
+		TemplateProxy templateProxy = new TemplateProxy("length-by-time/length-by-time.ftl.json");
 		templateProxy.putData("entries", entries);
-		String targetFileName = "users-by-time.json";
+		String targetFileName = "length-by-time.json";
 		File targetFile = new File(basePath, targetFileName);
 		templateProxy.generate(targetFile);
 	} 
 
 	static public class OutputEntry {
-		public OutputEntry(String dateTimeStr, int users) {
+		public OutputEntry(String dateTimeStr, double length) {
 			this.dateTimeStr = dateTimeStr;
-			this.users = users;;
+			this.length = length;
 		}
 		public String dateTimeStr;
-		public int users;
+		public double length;
 		public String getDateTimeStr() {
 			return dateTimeStr;
 		}
-		public int getUsers() {
-			return users;
+		public double getLength() {
+			return length;
 		} 
 	};
 
