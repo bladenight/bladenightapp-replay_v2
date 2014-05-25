@@ -21,13 +21,10 @@ import de.greencity.bladenightapp.time.ControlledClock;
 
 public class LogEntryHandlerProcession implements LogEntryHandler {
 
-	private File basePath;
-
 	public LogEntryHandlerProcession(File basePath, Route route, Event event) throws IOException {
 		procession = new Procession(controlledClock);
 		procession.setRoute(route);
 
-		this.basePath = basePath;
 		basePath.mkdirs();
 		this.writers = new ArrayList<ProcessionStatisticsWriter>();
 //		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
@@ -36,6 +33,7 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
 		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
 		this.writers.add(new HeadAndTailPosByTime(basePath, procession, event));
 		this.writers.add(new SpeedByPos(basePath, procession, event));
+		this.writers.add(new SpeedByCoord(basePath, procession, event));
 		this.writers.add(new WaitingTimeByPos(basePath, procession, event));
 		this.writers.add(new LengthByTime(basePath, procession, event));
 	}
