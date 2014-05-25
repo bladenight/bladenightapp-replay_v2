@@ -30,6 +30,9 @@
 		
 		<script type="text/javascript" >
 
+		var map;
+		var heatmapOverlay;
+		
 		function createDistanceMarkers(map, routeNodes) {
 			var every = 1000
 			var next = every;
@@ -81,14 +84,14 @@
 		function createHeatMap(map) {
 			  var pointArray = new google.maps.MVCArray(heatMapData);
 
-			  heatmap = new google.maps.visualization.HeatmapLayer({
+			  heatmapOverlay = new google.maps.visualization.HeatmapLayer({
 				    data: pointArray,
 				    radius: 0.0003,
 				    maxIntensity: 10,
 				    dissipating: false
 				  });
 
-			  heatmap.setMap(map);
+			  // heatmapOverlay.setMap(map);
 		}
 		
 		function createMarker(map, latlng, text) {
@@ -135,7 +138,8 @@
 					<td></td>
 				[/#if]
 				<td width="1000px" height="700px">
-					<div id="map_canvas" style="width:100%; height:100%;"></div>
+      					<input type="button" value="Heatmap" onclick="if ( heatmapOverlay.getMap() ) { heatmapOverlay.setMap(null); } else { heatmapOverlay.setMap(map); }"></input>
+						<div id="map_canvas" style="width:100%; height:100%;"></div>
 				</td>
 				[#if nextEvent??]
 					<td><a href="../${nextEvent.href}#map_canvas">${nextEvent.dateUserString}</a></td>
