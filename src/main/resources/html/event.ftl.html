@@ -25,6 +25,8 @@
 		<script type="text/javascript" src="../speed-by-pos.js"></script>
 		<script type="text/javascript" src="../waiting-time-by-pos.js"></script>
 		<script type="text/javascript" src="../length-by-time.js"></script>
+
+		<script type="text/javascript" src="heatmap.json"></script>
 		
 		<script type="text/javascript" >
 
@@ -56,7 +58,7 @@
 			map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 			// console.log("setting overlay");
 
-			// createHeatMap(map);
+			createHeatMap(map);
 			
 			var url = "route.json";
 			$.getJSON( url, function( data ) {

@@ -125,6 +125,8 @@ public class SpeedControlledPlayer {
 						@Override
 						public void onSuccess() {
 							routeMessage = getPayload(RouteMessage.class);
+							if ( routeMessage.len <= 1 )
+								throw new RuntimeException("Route has length " + routeMessage.len);
 							synchronized (signal) {
 								signal.notify();
 							}

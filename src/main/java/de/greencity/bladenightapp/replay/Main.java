@@ -108,27 +108,29 @@ public class Main {
 		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
 		Map<Event, List<OutputImageFile>> outputImageFilesByEvent = new HashMap<Event, List<OutputImageFile>>();
 		int idx = 0;
+		File rootPath = new File("output-2014");
 		for(Event event : eventList) {
 			System.out.println(event);
 			if ( event.getStatus() != EventStatus.CONFIRMED )
 				continue;
 			if ( idx++ > 2 )
 				continue;
-			String prefix = event.getStartDate().toString("yyyy-MM-dd");
+
+			File basePath = new File(rootPath, event.getStartDateAsString("yyyy-MM-dd"));
+			
 			Route route = routeStore.getRoute(event.getRouteName());
-			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(prefix, route, event);
+			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(basePath, route, event);
 			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 			player.setFromDateTime(event.getStartDate());
 			player.setToDateTime(event.getEndDate());
-			player.addLogEntryHandler(new LogEntryHandlerParticipantHeatMap(event));
+			player.addLogEntryHandler(new LogEntryHandlerParticipantHeatMap(basePath));
 			if (commandLine.getOptionValue("timelapse") != null)
 				player.setTimeLapseFactor(Double.parseDouble(commandLine.getOptionValue("timelapse")));
 			player.setLogEntries(logEntries);
 			player.replay();
 			outputImageFilesByEvent.put(event, logEntryHandler.getOutputImageFileList());
 		}
-		File basePath = new File("output-2013");
-		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(basePath, outputImageFilesByEvent).write();
+		new de.greencity.bladenightapp.replay.log.local.HtmlWriter(rootPath, outputImageFilesByEvent).write();
 	}
 
 	private static void runLogFilePlayerLocal() throws InterruptedException, IOException {
@@ -142,7 +144,7 @@ public class Main {
 		if (commandLine.getOptionValue("fromtime") != null)
 			prefix = parseCommandLineDateString(commandLine.getOptionValue("fromtime")).toString("yyyy-MM-dd");
 		getLog().info("Route length:" + route.getLength());
-		LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(prefix, route, null);
+		LogEntryHandler logEntryHandler = new LogEntryHandlerProcession(new File(prefix), route, null);
 		LogFilePlayer player = createPlayerFromOptions(logEntryHandler);
 		player.replay();
 	}

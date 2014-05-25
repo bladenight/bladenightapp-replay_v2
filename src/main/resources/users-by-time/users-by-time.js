@@ -6,7 +6,7 @@ HighchartsHelper.add({
 	          renderTo: 'users-by-time'
 	      },
 	      title: {
-	          text: 'Anzahl von Benutzern in der Zeit'
+	          text: 'Anzahl von Trackern in der Zeit'
 	      },
 	      xAxis: {
 	          type: 'datetime',

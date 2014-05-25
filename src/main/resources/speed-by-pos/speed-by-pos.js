@@ -12,7 +12,7 @@ HighchartsHelper.add({
 	          type: 'datetime',
 	          labels: {
 	              formatter: function() {
-	                  return Highcharts.numberFormat(this.value,0) + ' km';
+	                  return Highcharts.numberFormat(this.y,0) + ' km';
 	              }
 	          }
 	      },

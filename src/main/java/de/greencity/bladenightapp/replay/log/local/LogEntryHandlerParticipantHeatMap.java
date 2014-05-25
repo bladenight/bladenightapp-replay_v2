@@ -4,22 +4,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
 import de.greencity.bladenightapp.replay.log.ParticipanLogFile.LogEntry;
 import de.greencity.bladenightapp.replay.log.local.templatedata.TemplateProxy;
 
 public class LogEntryHandlerParticipantHeatMap implements LogEntryHandler {
 
-	public LogEntryHandlerParticipantHeatMap(Event event) {
-		this.event = event;
+	private List<Entry> entries = new ArrayList<Entry>();
+	private File basePath;
+	
+	public LogEntryHandlerParticipantHeatMap(File basePath) {
+		this.basePath = basePath;
 	}
 
 	@Override
 	public void finish() {
 		TemplateProxy templateProxy = new TemplateProxy("heatmap.ftl.js");
 		templateProxy.putData("entries", entries);
-		templateProxy.generate(new File(event.getStartDateAsString("yyyy-MM-dd") + "-heatmap.js"));
+		// templateProxy.generate(new File(event.getStartDateAsString("yyyy-MM-dd") + "-heatmap.js"));
+		String fileName = "heatmap.json";
+		templateProxy.generate(new File(basePath, fileName));
+
 	}
 
 	@Override
@@ -41,8 +46,5 @@ public class LogEntryHandlerParticipantHeatMap implements LogEntryHandler {
 			return longitude;
 		}
 	}
-	
-	private List<Entry> entries = new ArrayList<Entry>();
-	private Event event;
 }
 
