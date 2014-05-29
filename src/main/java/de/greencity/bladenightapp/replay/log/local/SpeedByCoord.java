@@ -65,9 +65,10 @@ public class SpeedByCoord extends ProcessionStatisticsWriter {
 			
 			double positionStart = segmentedLinearRoute.getPositionOfSegmentStart(i);
 			double positionEnd = segmentedLinearRoute.getPositionOfSegmentEnd(i);
-
+			
 			List<LatLong> list = procession.getRoute().getPartialRoute(positionStart, positionEnd);
-			for (int listIndex = 0 ; listIndex < list.size() - 1 ; listIndex ++) {
+			int upTo = ( i == segments.length - 1 ? list.size() : list.size() - 1 );
+			for (int listIndex = 0 ; listIndex < upTo ; listIndex ++) {
 				LatLong latLong = list.get(listIndex);
 				entries.add(new OutputEntry(latLong.lat, latLong.lon, median));
 			}
