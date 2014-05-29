@@ -121,7 +121,7 @@
             new google.maps.LatLng(data[i].lat, data[i].lon)
           ];
           // console.log(path);
-          var hue = ( data[i-1].speed / 35 ) * 240;
+          var hue = ( data[i-1].speed / 25 ) * 240;
           if ( hue > 240 ) { hue = 240 };
           if ( hue <  0 ) { hue = 0 };
           var rgb = HSVtoRGB(hue, 1, 1);

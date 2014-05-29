@@ -55,15 +55,23 @@ public class SpeedByCoord extends ProcessionStatisticsWriter {
 		List<OutputEntry> entries = new ArrayList<OutputEntry>();
 
 		for (int i = 0 ; i < segments.length ; i++) {
-			double pos = segmentedLinearRoute.getPositionOfSegmentStart(i);
-			LatLong latLong = procession.getRoute().convertLinearPositionToLatLong(pos);
+			
 			MedianFinder finder = segments[i].medianFinder;
 			if ( finder.getTotalWeight() == 0 || finder.sampleCount() == 0 )
 				continue;
 			double median = finder.findMedian();
 			if ( Double.isInfinite(median))
 				continue;
-			entries.add(new OutputEntry(latLong.lat, latLong.lon, median));
+			
+			double positionStart = segmentedLinearRoute.getPositionOfSegmentStart(i);
+			double positionEnd = segmentedLinearRoute.getPositionOfSegmentEnd(i);
+
+			List<LatLong> list = procession.getRoute().getPartialRoute(positionStart, positionEnd);
+			for (int listIndex = 0 ; listIndex < list.size() - 1 ; listIndex ++) {
+				LatLong latLong = list.get(listIndex);
+				entries.add(new OutputEntry(latLong.lat, latLong.lon, median));
+			}
+			
 		}
 
 		TemplateProxy templateProxy = new TemplateProxy("speed-by-coord/speed-by-coord.ftl.json");
