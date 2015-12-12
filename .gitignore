@@ -4,3 +4,4 @@ target/*
 target/
 trash/
 output-*/
+.DS_Store

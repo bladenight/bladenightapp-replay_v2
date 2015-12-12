@@ -12,7 +12,7 @@ HighchartsHelper.add({
 	          type: 'datetime',
 	          labels: {
 	              formatter: function() {
-	                  return Highcharts.numberFormat(this.y,0) + ' km';
+	                  return Highcharts.numberFormat(this.value,0) + ' km';
 	              }
 	          }
 	      },
@@ -28,7 +28,7 @@ HighchartsHelper.add({
 	      },
 	      tooltip: {
 	    	    formatter: function() {
-	    	        return this.x + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + Highcharts.numberFormat(this.value,0) + ' km/h';
+	    	        return this.x + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: ' + Highcharts.numberFormat(this.y,0) + ' km/h';
 	  			}
 	      }
 	  },

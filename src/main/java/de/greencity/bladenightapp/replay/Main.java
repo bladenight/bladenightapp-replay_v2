@@ -107,18 +107,28 @@ public class Main {
 		logFile.load();
 		List<ParticipanLogFile.LogEntry> logEntries = logFile.getEntries();
 		Map<Event, List<OutputImageFile>> outputImageFilesByEvent = new HashMap<Event, List<OutputImageFile>>();
-		int idx = 0;
-		File rootPath = new File("output-2014");
+		File rootPath = new File("output-2015");
 		for(Event event : eventList) {
-			System.out.println(event);
-			if ( event.getStatus() != EventStatus.CONFIRMED )
+			System.out.println("event="+event);
+			if ( event.getStatus() != EventStatus.CONFIRMED ) {
+				System.out.println("Skipping event, status="+event.getStatus());
 				continue;
-			if ( idx++ > 2 )
-				continue;
+			}
 
-			File basePath = new File(rootPath, event.getStartDateAsString("yyyy-MM-dd"));
+			String dateAsString = event.getStartDateAsString("yyyy-MM-dd");
+			File basePath = new File(rootPath, dateAsString);
 			
-			Route route = routeStore.getRoute(event.getRouteName());
+			String routeName = event.getRouteName();
+			String customizedRouteName = routeName + " " + dateAsString;
+			
+			Route route;
+			if ( routeStore.getRoute(customizedRouteName) != null ) {
+				System.out.println("Using customized route: " + customizedRouteName);
+				route = routeStore.getRoute(customizedRouteName);
+			}
+			else
+				route = routeStore.getRoute(routeName);
+			
 			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(basePath, route, event);
 			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
 			player.setFromDateTime(event.getStartDate());

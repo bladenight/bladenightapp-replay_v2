@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import de.greencity.bladenightapp.network.BladenightUrl;
 import de.greencity.bladenightapp.network.messages.GpsInfo;
 import de.greencity.bladenightapp.replay.log.LogEntryHandler;
-import de.greencity.bladenightapp.replay.log.ParticipanLogFile;
 import de.greencity.bladenightapp.replay.log.ParticipanLogFile.LogEntry;
 import fr.ocroquette.wampoc.adapters.jetty.JettyClient;
 import fr.ocroquette.wampoc.client.RpcResultReceiver;
