@@ -126,8 +126,10 @@ public class Main {
 				System.out.println("Using customized route: " + customizedRouteName);
 				route = routeStore.getRoute(customizedRouteName);
 			}
-			else
+			else {
+				System.out.println("Using normal route: " + routeName);
 				route = routeStore.getRoute(routeName);
+			}
 			
 			LogEntryHandlerProcession logEntryHandler = new LogEntryHandlerProcession(basePath, route, event);
 			LogFilePlayer player = new LogFilePlayer(logEntryHandler);
