@@ -34,7 +34,7 @@ public class SpeedControlledParticipant implements Runnable {
 		long sleptTime = 0;
 		while(true) {
 			double speed = speedMaster.speedAt(linearPosition);
-			linearPosition += speed / 3.6 * sleptTime / 1000.0; 
+			linearPosition += speed / 3.6 * sleptTime / 1000.0;
 			LatLong latLong = callbackInterface.convert(linearPosition);
 			try {
 				sendGpsInfo(latLong);

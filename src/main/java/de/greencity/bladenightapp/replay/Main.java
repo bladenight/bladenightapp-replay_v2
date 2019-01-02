@@ -164,6 +164,7 @@ public class Main {
 	private static void runConstantSpeedPlayer() throws URISyntaxException {
 		SpeedControlledPlayer player = new SpeedControlledPlayer(new URI(commandLine.getOptionValue("url")));
 
+		// speed is in km/h
 		if (commandLine.getOptionValue("speed") != null)
 			player.setBaseSpeed(Double.parseDouble(commandLine.getOptionValue("speed")));
 		if (commandLine.getOptionValue("count") != null)
