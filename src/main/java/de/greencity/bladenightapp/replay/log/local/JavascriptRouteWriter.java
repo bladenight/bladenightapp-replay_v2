@@ -14,26 +14,26 @@ import de.greencity.bladenightapp.routes.Route.LatLong;
 
 public class JavascriptRouteWriter extends ProcessionStatisticsWriter {
 
-	public JavascriptRouteWriter(File basePath, Procession procession, Event event) {
-		super(basePath, procession, event);
-	}
+    public JavascriptRouteWriter(File basePath, Procession procession, Event event) {
+        super(basePath, procession, event);
+    }
 
-	@Override
-	public void checkpoint(DateTime dateTime) {
-	}
+    @Override
+    public void checkpoint(DateTime dateTime) {
+    }
 
-	@Override
-	public void finish() {
+    @Override
+    public void finish() {
 
-		TemplateProxy templateProxy = new TemplateProxy("route.ftl.json");
-		List<LatLongProxy> entries = new ArrayList<LatLongProxy>();
-		for (LatLong latLong : procession.getRoute().getNodesLatLong()) {
-			entries.add(new LatLongProxy(latLong));
-		}
-		templateProxy.putData("entries", entries);
+        TemplateProxy templateProxy = new TemplateProxy("route.ftl.json");
+        List<LatLongProxy> entries = new ArrayList<LatLongProxy>();
+        for (LatLong latLong : procession.getRoute().getNodesLatLong()) {
+            entries.add(new LatLongProxy(latLong));
+        }
+        templateProxy.putData("entries", entries);
 
-		String fileName = "route.json";
-		templateProxy.generate(newOutputFile(fileName));
-	}
+        String fileName = "route.json";
+        templateProxy.generate(newOutputFile(fileName));
+    }
 
 }

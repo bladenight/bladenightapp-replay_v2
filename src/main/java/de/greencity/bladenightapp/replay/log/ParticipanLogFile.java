@@ -17,62 +17,62 @@ import de.greencity.bladenightapp.valuelogger.ValueReader.Entry;
 
 public class ParticipanLogFile {
 
-	public class LogEntry {
-		public String deviceId;
-		public DateTime dateTime; 
-		public double latitude; 
-		public double longitude;
-		public double accuracy;
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this);
-		}
+    public class LogEntry {
+        public String deviceId;
+        public DateTime dateTime;
+        public double latitude;
+        public double longitude;
+        public double accuracy;
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
 
-	};
+    };
 
-	public ParticipanLogFile(File file) {
-		this.file = file;
-	}
+    public ParticipanLogFile(File file) {
+        this.file = file;
+    }
 
-	public void load() throws IOException {
-		getLog().info("Reading " + file.getAbsolutePath() + "...");
+    public void load() throws IOException {
+        getLog().info("Reading " + file.getAbsolutePath() + "...");
 
-		logEntries = new ArrayList<LogEntry>();
-		Consumer consumer = new Consumer() {
-			@Override
-			public void consume(Entry entry) {
-				LogEntry logEntry = new LogEntry();
-				logEntry.deviceId= entry.getString("did"); 
-				logEntry.dateTime= new DateTime(entry.getString("ts")); 
-				logEntry.latitude= entry.getDouble("la"); 
-				logEntry.longitude= entry.getDouble("lo"); 
-				logEntry.accuracy= entry.getDouble("ac"); 
-				logEntries.add(logEntry);
-			}
-		};
-		
-		ValueReader valueReader = new ValueReader(file, consumer);
-		valueReader.read();
-		
-		getLog().info("Got " + logEntries.size() + " log entries");
-	}
+        logEntries = new ArrayList<LogEntry>();
+        Consumer consumer = new Consumer() {
+            @Override
+            public void consume(Entry entry) {
+                LogEntry logEntry = new LogEntry();
+                logEntry.deviceId= entry.getString("did");
+                logEntry.dateTime= new DateTime(entry.getString("ts"));
+                logEntry.latitude= entry.getDouble("la");
+                logEntry.longitude= entry.getDouble("lo");
+                logEntry.accuracy= entry.getDouble("ac");
+                logEntries.add(logEntry);
+            }
+        };
 
-	public List<LogEntry> getEntries() {
-		return Collections.unmodifiableList(logEntries);
-	}
+        ValueReader valueReader = new ValueReader(file, consumer);
+        valueReader.read();
 
-	private static Log log;
+        getLog().info("Got " + logEntries.size() + " log entries");
+    }
 
-	public static void setLog(Log log) {
-		ParticipanLogFile.log = log;
-	}
+    public List<LogEntry> getEntries() {
+        return Collections.unmodifiableList(logEntries);
+    }
 
-	protected static Log getLog() {
-		if (log == null)
-			setLog(LogFactory.getLog(ParticipanLogFile.class));
-		return log;
-	}
+    private static Log log;
 
-	private File file;
-	private List<LogEntry> logEntries;
+    public static void setLog(Log log) {
+        ParticipanLogFile.log = log;
+    }
+
+    protected static Log getLog() {
+        if (log == null)
+            setLog(LogFactory.getLog(ParticipanLogFile.class));
+        return log;
+    }
+
+    private File file;
+    private List<LogEntry> logEntries;
 }

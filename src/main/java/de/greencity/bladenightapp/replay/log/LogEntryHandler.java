@@ -5,8 +5,8 @@ import de.greencity.bladenightapp.replay.log.ParticipanLogFile.LogEntry;
 
 public interface LogEntryHandler {
 
-	public abstract void handleLogEntry(LogEntry logEntry) throws Exception;
+    public abstract void handleLogEntry(LogEntry logEntry) throws Exception;
 
-	public abstract void finish();
+    public abstract void finish();
 
 }

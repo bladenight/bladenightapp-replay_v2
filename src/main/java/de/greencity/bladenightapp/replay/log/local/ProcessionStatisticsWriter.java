@@ -10,44 +10,44 @@ import de.greencity.bladenightapp.events.Event;
 import de.greencity.bladenightapp.procession.Procession;
 
 public abstract class ProcessionStatisticsWriter {
-	public ProcessionStatisticsWriter(File basePath, Procession procession, Event event) {
-		this.basePath = basePath;
-		this.procession = procession;
-		this.event = event;
-	}
+    public ProcessionStatisticsWriter(File basePath, Procession procession, Event event) {
+        this.basePath = basePath;
+        this.procession = procession;
+        this.event = event;
+    }
 
-	public abstract void checkpoint(DateTime dateTime);
+    public abstract void checkpoint(DateTime dateTime);
 
-	public abstract void finish();
+    public abstract void finish();
 
-	public Event getEvent() {
-		return event;
-	}
+    public Event getEvent() {
+        return event;
+    }
 
-	public void setEvent(Event event) {
-		this.event = event;
-	}
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
-	protected File newOutputFile(String name) {
-		return new File(basePath, name);
-	}
-
-
-	protected Event event;
-	protected File basePath;
-	protected Procession procession;
+    protected File newOutputFile(String name) {
+        return new File(basePath, name);
+    }
 
 
-	private static Log log;
+    protected Event event;
+    protected File basePath;
+    protected Procession procession;
 
-	public static void setLog(Log log) {
-		ProcessionStatisticsWriter.log = log;
-	}
 
-	protected static Log getLog() {
-		if (log == null)
-			setLog(LogFactory.getLog(GnuplotWriter.class));
-		return log;
-	}
+    private static Log log;
+
+    public static void setLog(Log log) {
+        ProcessionStatisticsWriter.log = log;
+    }
+
+    protected static Log getLog() {
+        if (log == null)
+            setLog(LogFactory.getLog(GnuplotWriter.class));
+        return log;
+    }
 
 }

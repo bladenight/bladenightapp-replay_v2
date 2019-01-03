@@ -18,56 +18,56 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class TemplateProxy {
 
-	public TemplateProxy(String templateName) {
-		this.dataModel = new HashMap<String, Object>(); 
-		this.templateName = templateName;
-	}
-	
-	public void generate(File outputFile) {
-		try {
-			Template temp = getInstance().getTemplate(templateName);
-			Writer writer = new FileWriter(outputFile);
-			temp.process(dataModel, writer);
-			writer.close();
-		} catch (TemplateException e) {
-			getLog().error("Failed to generate " + outputFile.getName(), e);
-		} catch (IOException e) {
-			getLog().error("Failed to generate " + outputFile.getName(), e);
-		}  
-	}
-	
-	public void putData(String key, Object data) {
-		dataModel.put(key, data);
-	}
+    public TemplateProxy(String templateName) {
+        this.dataModel = new HashMap<String, Object>();
+        this.templateName = templateName;
+    }
 
-	static private Configuration getInstance() {
-		if ( configuration == null )
-			createInstance();
-		return configuration;
-	}
+    public void generate(File outputFile) {
+        try {
+            Template temp = getInstance().getTemplate(templateName);
+            Writer writer = new FileWriter(outputFile);
+            temp.process(dataModel, writer);
+            writer.close();
+        } catch (TemplateException e) {
+            getLog().error("Failed to generate " + outputFile.getName(), e);
+        } catch (IOException e) {
+            getLog().error("Failed to generate " + outputFile.getName(), e);
+        }
+    }
 
-	static private void createInstance() {
-		configuration = new Configuration();
-		configuration.setClassForTemplateLoading(TemplateProxy.class, "/");
-		configuration.setObjectWrapper(new DefaultObjectWrapper());
-		configuration.setDefaultEncoding("UTF-8");
-		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
-	}
+    public void putData(String key, Object data) {
+        dataModel.put(key, data);
+    }
 
-	private Map<String, Object> dataModel;
-	private String templateName;
+    static private Configuration getInstance() {
+        if ( configuration == null )
+            createInstance();
+        return configuration;
+    }
 
-	static private Configuration configuration;
+    static private void createInstance() {
+        configuration = new Configuration();
+        configuration.setClassForTemplateLoading(TemplateProxy.class, "/");
+        configuration.setObjectWrapper(new DefaultObjectWrapper());
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+    }
 
-	private static Log log;
+    private Map<String, Object> dataModel;
+    private String templateName;
 
-	public static void setLog(Log log) {
-		TemplateProxy.log = log;
-	}
+    static private Configuration configuration;
 
-	protected static Log getLog() {
-		if (log == null)
-			setLog(LogFactory.getLog(TemplateProxy.class));
-		return log;
-	}
+    private static Log log;
+
+    public static void setLog(Log log) {
+        TemplateProxy.log = log;
+    }
+
+    protected static Log getLog() {
+        if (log == null)
+            setLog(LogFactory.getLog(TemplateProxy.class));
+        return log;
+    }
 }

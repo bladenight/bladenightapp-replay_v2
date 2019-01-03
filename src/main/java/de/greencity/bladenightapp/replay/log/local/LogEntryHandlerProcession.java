@@ -21,89 +21,89 @@ import de.greencity.bladenightapp.time.ControlledClock;
 
 public class LogEntryHandlerProcession implements LogEntryHandler {
 
-	public LogEntryHandlerProcession(File basePath, Route route, Event event) throws IOException {
-		procession = new Procession(controlledClock);
-		procession.setRoute(route);
+    public LogEntryHandlerProcession(File basePath, Route route, Event event) throws IOException {
+        procession = new Procession(controlledClock);
+        procession.setRoute(route);
 
-		basePath.mkdirs();
-		this.writers = new ArrayList<ProcessionStatisticsWriter>();
-//		this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
-//		this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
-		this.writers.add(new UsersByTime(basePath, procession, event));
-		this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
-		this.writers.add(new HeadAndTailPosByTime(basePath, procession, event));
-		this.writers.add(new SpeedByPos(basePath, procession, event));
-		this.writers.add(new SpeedByCoord(basePath, procession, event));
-		this.writers.add(new WaitingTimeByPos(basePath, procession, event));
-		this.writers.add(new LengthByTime(basePath, procession, event));
-	}
+        basePath.mkdirs();
+        this.writers = new ArrayList<ProcessionStatisticsWriter>();
+//      this.writers.add(new ProcessionLengthWriter(filePrefix + "-procession-length", procession, event));
+//      this.writers.add(new ProcessionProgressionWriter(filePrefix + "-procession-progression", procession, event));
+        this.writers.add(new UsersByTime(basePath, procession, event));
+        this.writers.add(new JavascriptRouteWriter(basePath, procession, event));
+        this.writers.add(new HeadAndTailPosByTime(basePath, procession, event));
+        this.writers.add(new SpeedByPos(basePath, procession, event));
+        this.writers.add(new SpeedByCoord(basePath, procession, event));
+        this.writers.add(new WaitingTimeByPos(basePath, procession, event));
+        this.writers.add(new LengthByTime(basePath, procession, event));
+    }
 
-	@Override
-	public void finish() {
-		for (ProcessionStatisticsWriter writer : this.writers) {
-			writer.finish();
-			// TODO refactor
-//			if ( writer instanceof GnuplotWriter )
-//				((GnuplotWriter)writer).addOutputImageFilesToThisList(outputImageFileList);
-			// System.out.println("size="+outputImageFileList.size());
-		}
-	}
+    @Override
+    public void finish() {
+        for (ProcessionStatisticsWriter writer : this.writers) {
+            writer.finish();
+            // TODO refactor
+//          if ( writer instanceof GnuplotWriter )
+//              ((GnuplotWriter)writer).addOutputImageFilesToThisList(outputImageFileList);
+            // System.out.println("size="+outputImageFileList.size());
+        }
+    }
 
-	@Override
-	public void handleLogEntry(LogEntry logEntry) throws Exception {
-		controlledClock.set(logEntry.dateTime.getMillis());
+    @Override
+    public void handleLogEntry(LogEntry logEntry) throws Exception {
+        controlledClock.set(logEntry.dateTime.getMillis());
 
-		ParticipantInput participantInput = new ParticipantInput(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude); 
-		procession.updateParticipant(participantInput);
+        ParticipantInput participantInput = new ParticipantInput(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude);
+        procession.updateParticipant(participantInput);
 
-		ParticipantCollector collector = createCollector(procession);
-		if ( lastPrintTime == null || Seconds.secondsBetween(lastPrintTime, logEntry.dateTime).getSeconds() > 30 ) {
-			System.out.println("Checkpoint at: " +  logEntry.dateTime);
-			collector.collect();
-			procession.compute();
-			lastPrintTime = logEntry.dateTime;
-			for (ProcessionStatisticsWriter writer : this.writers) {
-				writer.checkpoint(logEntry.dateTime);
-			}
+        ParticipantCollector collector = createCollector(procession);
+        if ( lastPrintTime == null || Seconds.secondsBetween(lastPrintTime, logEntry.dateTime).getSeconds() > 30 ) {
+            System.out.println("Checkpoint at: " +  logEntry.dateTime);
+            collector.collect();
+            procession.compute();
+            lastPrintTime = logEntry.dateTime;
+            for (ProcessionStatisticsWriter writer : this.writers) {
+                writer.checkpoint(logEntry.dateTime);
+            }
 
-		}
-	}
+        }
+    }
 
-	private ParticipantCollector createCollector(Procession procession) {
-		long maxAbsoluteAge 			= 30000;
-		double maxRelativeAgeFactor 	= 5.0;
+    private ParticipantCollector createCollector(Procession procession) {
+        long maxAbsoluteAge             = 30000;
+        double maxRelativeAgeFactor     = 5.0;
 
-		ParticipantCollector collector = new ParticipantCollector(procession);
-		collector.setMaxAbsoluteAge(maxAbsoluteAge);
-		collector.setMaxRelativeAgeFactor(maxRelativeAgeFactor);
+        ParticipantCollector collector = new ParticipantCollector(procession);
+        collector.setMaxAbsoluteAge(maxAbsoluteAge);
+        collector.setMaxRelativeAgeFactor(maxRelativeAgeFactor);
 
-		collector.setClock(controlledClock);
+        collector.setClock(controlledClock);
 
-		return collector;
-	}
+        return collector;
+    }
 
-	public List<OutputImageFile> getOutputImageFileList() {
-		return outputImageFileList;
-	}
+    public List<OutputImageFile> getOutputImageFileList() {
+        return outputImageFileList;
+    }
 
 
-	private Procession procession;
+    private Procession procession;
 
-	private Log log;
-	private DateTime lastPrintTime = null;
-	private ControlledClock controlledClock = new ControlledClock();
-	private List<ProcessionStatisticsWriter> writers;
-	private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
+    private Log log;
+    private DateTime lastPrintTime = null;
+    private ControlledClock controlledClock = new ControlledClock();
+    private List<ProcessionStatisticsWriter> writers;
+    private List<OutputImageFile> outputImageFileList = new ArrayList<OutputImageFile>();
 
-	public void setLog(Log log) {
-		this.log = log;
-	}
+    public void setLog(Log log) {
+        this.log = log;
+    }
 
-	protected Log getLog() {
-		if (log == null)
-			setLog(LogFactory.getLog(LogEntryHandlerProcession.class));
-		return log;
-	}
+    protected Log getLog() {
+        if (log == null)
+            setLog(LogFactory.getLog(LogEntryHandlerProcession.class));
+        return log;
+    }
 
 }
 
