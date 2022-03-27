@@ -4,7 +4,7 @@ bladenightapp-replay
 Simulates bladenight clients for testing purposes.
 
 
---speed 20 --count 30 --startperiod=5000  --url ws://localhost:8081"
+--speed 20 --count 30 --startperiod=5000  --url ws://localhost:8081
 
 --file bladenight-log-2013.log --fromtime "2013-06-17T21:00" --totime "2013-06-17T23:15" --timelapse 10 --url ws://localhost:8081
 
