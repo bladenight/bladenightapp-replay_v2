@@ -10,7 +10,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-     maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "https://maven.geotoolkit.org/" }
+    maven { url "https://repo.maven.apache.org/maven2" }
 }
 
 dependencies {
