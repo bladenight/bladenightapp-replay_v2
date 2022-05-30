@@ -17,7 +17,7 @@ Simulates bladenight clients for testing purposes.
 --file protocol-2014-anonym.log --timelapse 1200 --events-dir 2014/events --routes-dir 2014/routes"
 
 
---file 2015/protocol-filtered.log --fromtime "2015-05-01T21:10" --totime "2015-09-10T23:15" --timelapse 1000  --events-dir 2015/events --routes-dir 2015/routes"
+--file 2015/protocol-filtered.log --timelapse 1000  --events-dir 2015/events --routes-dir 2015/routes"
 
 
 
