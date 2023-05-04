@@ -51,7 +51,7 @@ public class LogEntryHandlerWampClient implements LogEntryHandler {
         };
 
         try {
-            GpsInfo gpsInfo = new GpsInfo(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude,0,2);
+            GpsInfo gpsInfo = new GpsInfo(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude,logEntry.realSpeed);
             wampClient.call(BladenightUrl.GET_REALTIME_UPDATE.getText(), receiver, gpsInfo);
         }
         catch (IOException e) {

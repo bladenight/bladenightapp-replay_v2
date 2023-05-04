@@ -163,7 +163,7 @@ public class Main {
     }
 
     private static void runConstantSpeedPlayer() throws URISyntaxException {
-        SpeedControlledPlayer player = new SpeedControlledPlayer(new URI(commandLine.getOptionValue("url")));
+        SpeedControlledPlayer player = new SpeedControlledPlayer(new URI(commandLine.getOptionValue("url")),commandLine.getOptionValue("key"));
 
         // speed is in km/h
         if (commandLine.getOptionValue("speed") != null)
@@ -251,6 +251,12 @@ public class Main {
                 .withDescription( "wait time between participant starts")
                 .hasArg()
                 .withArgName("STARTPERIOD")
+                .create() );
+        options.addOption(OptionBuilder
+                .withLongOpt( "key" )
+                .withDescription( "set basic auth key like test:test")
+                .hasArg()
+                .withArgName("KEY")
                 .create() );
 
         CommandLine commandLine = null;

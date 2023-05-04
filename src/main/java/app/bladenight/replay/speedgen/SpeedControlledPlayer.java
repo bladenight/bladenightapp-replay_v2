@@ -21,8 +21,9 @@ import app.bladenight.wampv2.client.WampClient;
 
 
 public class SpeedControlledPlayer {
-    public SpeedControlledPlayer(URI uri) {
+    public SpeedControlledPlayer(URI uri,String authorisationKey) {
         this.serverUri = uri;
+        this.authorisationKey=authorisationKey;
     }
 
     public double getBaseSpeed() {
@@ -104,7 +105,7 @@ public class SpeedControlledPlayer {
                     return usualSpeed;
                 }
             };
-            SpeedControlledParticipant participant = new SpeedControlledParticipant(client, callbackInterface, speedMaster, updatePeriod);
+            SpeedControlledParticipant participant = new SpeedControlledParticipant(client, callbackInterface, speedMaster, updatePeriod,routeMessage.len);
             participant.setDeviceId(deviceIdPrefix + "-ConstantSpeed-" + i);
             getLog().info("Starting a new participant (" + i + ")");
             Thread t = new Thread(participant);
@@ -170,7 +171,7 @@ public class SpeedControlledPlayer {
             }
         };
 
-        WampClient wampClient=new WampClient(channel);
+        WampClient wampClient=new WampClient(channel,serverUri,authorisationKey);
         return wampClient;
     }
 
@@ -200,6 +201,8 @@ public class SpeedControlledPlayer {
 
     private URI serverUri;
     private RouteMessage routeMessage;
+
+    private String authorisationKey="";
 
     private double baseSpeed = 30.0;
     private double speedVaration = 20.0;

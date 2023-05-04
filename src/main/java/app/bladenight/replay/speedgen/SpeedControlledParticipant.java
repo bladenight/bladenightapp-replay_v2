@@ -1,17 +1,17 @@
 package app.bladenight.replay.speedgen;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import app.bladenight.common.network.BladenightUrl;
 import app.bladenight.common.network.messages.GpsInfo;
 import app.bladenight.common.routes.Route.LatLong;
 import app.bladenight.common.time.Sleep;
 import app.bladenight.wampv2.client.RpcResultReceiver;
 import app.bladenight.wampv2.client.WampClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.IOException;
+import java.util.Random;
+import java.util.UUID;
 
 public class SpeedControlledParticipant implements Runnable {
 
@@ -19,11 +19,12 @@ public class SpeedControlledParticipant implements Runnable {
         public double speedAt(double linearPosition);
     }
 
-    SpeedControlledParticipant(WampClient client, LinearPositionToLatLongInterface callbackInterface, SpeedMaster speedMaster, long updatePeriod) {
+    SpeedControlledParticipant(WampClient client, LinearPositionToLatLongInterface callbackInterface, SpeedMaster speedMaster, long updatePeriod, int routeLength) {
         this.updatePeriod = updatePeriod;
         this.callbackInterface = callbackInterface;
         this.speedMaster = speedMaster;
         this.wampClient = client;
+        this.routeLength = routeLength;
         this.deviceId = UUID.randomUUID().toString();
     }
 
@@ -32,17 +33,20 @@ public class SpeedControlledParticipant implements Runnable {
         double linearPosition = startPosition;
         startTime = System.currentTimeMillis();
         long sleptTime = 0;
-        while(true) {
+        while (true) {
             double speed = speedMaster.speedAt(linearPosition);
             linearPosition += speed / 3.6 * sleptTime / 1000.0;
             LatLong latLong = callbackInterface.convert(linearPosition);
+            if (linearPosition >= routeLength) {
+                return;
+            }
             try {
                 sendGpsInfo(latLong);
                 long timeBeforeSleep = System.currentTimeMillis();
                 Sleep.sleep(updatePeriod);
                 sleptTime = System.currentTimeMillis() - timeBeforeSleep;
             } catch (Exception e) {
-                getLog().error(e.getMessage(),e);
+                getLog().error(e.getMessage(), e);
                 return;
             }
         }
@@ -57,7 +61,7 @@ public class SpeedControlledParticipant implements Runnable {
     }
 
     public void sendGpsInfo(LatLong latLong) throws IOException {
-        getLog().info(getDeviceId()+": sending  ("+latLong+")");
+        getLog().info(getDeviceId() + ": sending  (" + latLong + ")");
         RpcResultReceiver receiver = new RpcResultReceiver() {
             @Override
             public void onSuccess() {
@@ -73,6 +77,8 @@ public class SpeedControlledParticipant implements Runnable {
         };
 
         GpsInfo gpsInfo = new GpsInfo();
+        gpsInfo.setSpecialFunction(new Random().nextInt((2 - 0) + 1) + 0);
+        gpsInfo.setRealUserSpeed((new Random().nextInt((40 - 0) + 1) + 0));
         gpsInfo.setLatitude(latLong.lat);
         gpsInfo.setLongitude(latLong.lon);
         gpsInfo.setDeviceId(deviceId);
@@ -93,6 +99,7 @@ public class SpeedControlledParticipant implements Runnable {
     private LinearPositionToLatLongInterface callbackInterface;
     private long startTime;
     private long updatePeriod;
+    private int routeLength;
     private double startPosition;
     private WampClient wampClient;
     private String deviceId;

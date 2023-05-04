@@ -1,10 +1,11 @@
 package app.bladenight.replay.log.local;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import app.bladenight.common.events.Event;
+import app.bladenight.common.procession.ParticipantInput;
+import app.bladenight.common.procession.Procession;
+import app.bladenight.common.procession.tasks.ParticipantCollector;
+import app.bladenight.common.routes.Route;
+import app.bladenight.common.time.ControlledClock;
 import app.bladenight.replay.log.LogEntryHandler;
 import app.bladenight.replay.log.ParticipanLogFile;
 import org.apache.commons.logging.Log;
@@ -12,12 +13,10 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
-import app.bladenight.common.events.Event;
-import app.bladenight.common.procession.ParticipantInput;
-import app.bladenight.common.procession.Procession;
-import app.bladenight.common.procession.tasks.ParticipantCollector;
-import app.bladenight.common.routes.Route;
-import app.bladenight.common.time.ControlledClock;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogEntryHandlerProcession implements LogEntryHandler {
 
@@ -53,12 +52,12 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
     public void handleLogEntry(ParticipanLogFile.LogEntry logEntry) throws Exception {
         controlledClock.set(logEntry.dateTime.getMillis());
 
-        ParticipantInput participantInput = new ParticipantInput(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude);
+        ParticipantInput participantInput = new ParticipantInput(logEntry.deviceId, true, logEntry.latitude, logEntry.longitude, logEntry.realSpeed);
         procession.updateParticipant(participantInput);
 
         ParticipantCollector collector = createCollector(procession);
-        if ( lastPrintTime == null || Seconds.secondsBetween(lastPrintTime, logEntry.dateTime).getSeconds() > 30 ) {
-            System.out.println("Checkpoint at: " +  logEntry.dateTime);
+        if (lastPrintTime == null || Seconds.secondsBetween(lastPrintTime, logEntry.dateTime).getSeconds() > 30) {
+            System.out.println("Checkpoint at: " + logEntry.dateTime);
             collector.collect();
             procession.compute();
             lastPrintTime = logEntry.dateTime;
@@ -70,8 +69,8 @@ public class LogEntryHandlerProcession implements LogEntryHandler {
     }
 
     private ParticipantCollector createCollector(Procession procession) {
-        long maxAbsoluteAge             = 30000;
-        double maxRelativeAgeFactor     = 5.0;
+        long maxAbsoluteAge = 30000;
+        double maxRelativeAgeFactor = 5.0;
 
         ParticipantCollector collector = new ParticipantCollector(procession);
         collector.setMaxAbsoluteAge(maxAbsoluteAge);
