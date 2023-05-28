@@ -171,8 +171,7 @@ public class SpeedControlledPlayer {
             }
         };
 
-        WampClient wampClient=new WampClient(channel,serverUri,authorisationKey);
-        return wampClient;
+        return new WampClient(channel,serverUri,authorisationKey);
     }
 
     public LatLong convertLinearPositionToLatLong(double linearPosition) {
