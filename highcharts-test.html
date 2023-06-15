@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang='en'>
+<head>
+	<meta charset='utf-8'>
+	<title>Index</title>
+	<script src="jquery-1.10.2.min.js"></script>
+	<script src="highcharts.js"></script>
+	<script>
+	var chart;
+	
+	function initChart() {
+        Highcharts.setOptions({
+            lang: {
+                    loading: 'Laden...',
+                    months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'October', 'November', 'Dezember'],
+                    weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                    shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dez'],
+                    exportButtonTitle: "Exportieren",
+                    printButtonTitle: "Ausdrucken",
+                    rangeSelectorFrom: "Von:",
+                    rangeSelectorTo: "An:",
+                    rangeSelectorZoom: "Zeitrahmen:",
+                    downloadPNG: 'Als PNG herunterladen',
+                    downloadJPEG: 'Als JPEG  herunterladen',
+                    downloadPDF: 'Als PDF herunterladen',
+                    downloadSVG: 'Als SVG herunterladen',
+                    resetZoom: "Zoom zurücksetzen",
+                    resetZoomTitle: "Zoom zurücksetzen",
+                    thousandsSep: ".",
+                    decimalPoint: ','
+                    }
+            }
+        );
+		var options = {
+			      plotOptions: {
+				        series: {
+				          animation: false
+				        },
+				      },
+				      chart: {
+				          type: 'spline',
+				          renderTo: 'head-and-tail-by-time'
+				      },
+				      title: {
+				          text: 'Entwicklung der Spitze und des Schlusses mit der Zeit'
+				      },
+				      xAxis: {
+				          type: 'datetime',
+				      },
+				      yAxis: {
+				          title: {
+				              text: 'Position'
+				          }
+				      },
+				      tooltip: {
+				    	    formatter: function() {
+				    	    	var dateStr = Highcharts.dateFormat('%H:%M', new Date(this.x));
+				    	        return dateStr + '<br/>' + '<span style="color:'+this.series.color+'">'+ this.series.name +'</span>: '+ this.y;
+				    	     }				      }
+				  };
+		chart = new Highcharts.Chart(options);
+	}
+	
+	function convertData(data) {
+	    newData = [];
+    	console.log(data);
+    	for (var i=0; i < data.length; i++) {
+	    	console.log(i);
+	        newData.push( [ new Date(data[i][0]).getTime(), data[i][1] ] );
+	    }
+	    return newData;
+	} 
+	
+	$(function () {
+		initChart();
+ 		console.log("init");
+		$.getJSON( "head-pos-by-time.js", function( data ) {
+			console.log("here");
+			chart.addSeries({
+				name : 'Zugspitze',
+				color : 'green',
+				data: convertData(data)
+			})
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ", " + error;
+			console.log( "Request Failed: " + err )
+		})
+		$.getJSON( "tail-pos-by-time.js", function( data ) {
+			console.log("here");
+			chart.addSeries({
+				name : 'Zugschluss',
+				color : 'red',
+				data: convertData(data)
+			})
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ", " + error;
+			console.log( "Request Failed: " + err )
+		})
+	});
+</script>
+</head>
+
+<body>
+  <div id="head-and-tail-by-time" style="width:100%; height:400px;"></div>
+</body>
+
+</html>

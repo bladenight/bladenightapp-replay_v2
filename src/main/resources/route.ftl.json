@@ -1,0 +1,5 @@
+[
+  <#list entries as entry>
+    { "lat":${entry.latitude?string("00.000000")}, "lon":${entry.longitude?string("00.000000")} } <#if entry_has_next>,</#if>
+  </#list>
+]

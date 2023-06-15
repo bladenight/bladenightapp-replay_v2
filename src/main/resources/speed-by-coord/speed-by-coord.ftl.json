@@ -1,0 +1,6 @@
+[
+	<#list entries as entry>
+		{ "lat": ${entry.latitude?string("0.00000")}, "lon": ${entry.longitude?string("0.00000")}, "speed": ${entry.speed?string("0.00")} } <#if entry_has_next>,</#if>
+	</#list>
+]
+
