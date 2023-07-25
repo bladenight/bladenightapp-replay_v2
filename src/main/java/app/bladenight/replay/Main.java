@@ -61,7 +61,7 @@ public class Main {
         String urlOption = commandLine.getOptionValue("url");
         String eventsDirOption = commandLine.getOptionValue("events-dir");
         if ( urlOption != null ) {
-            runLogFilePlayerWithWampClient(urlOption);
+            runLogFilePlayerWithWampClient();
         }
         else if ( eventsDirOption != null ) {
             runLogFilePlayerLocalForEveryEvent();
@@ -87,9 +87,9 @@ public class Main {
         return player;
     }
 
-    private static void runLogFilePlayerWithWampClient(String url) throws URISyntaxException, IOException, InterruptedException {
+    private static void runLogFilePlayerWithWampClient() throws URISyntaxException, IOException, InterruptedException {
         LogEntryHandler logEntryHandler;
-        logEntryHandler = new LogEntryHandlerWampClient(new URI(url));
+        logEntryHandler = new LogEntryHandlerWampClient(new URI(commandLine.getOptionValue("url")),commandLine.getOptionValue("key"));
         LogFilePlayer player = createPlayerFromOptions(logEntryHandler);
         player.replay();
     }

@@ -19,9 +19,10 @@ import app.bladenight.wampv2.client.WampClient;
 
 public class LogEntryHandlerWampClient implements LogEntryHandler {
 
-    public LogEntryHandlerWampClient(URI uri) {
+    public LogEntryHandlerWampClient(URI uri,String authorisationKey) {
         this.serverUri = uri;
         this.wampClients = new HashMap<String, WampClient>();
+        this.authorisationKey =authorisationKey;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class LogEntryHandlerWampClient implements LogEntryHandler {
             public void handle(String message) throws IOException {
 
             }
-        });
+        },this.serverUri,this.authorisationKey);
         return wc;
         /*JettyClient jettyClient = new JettyClient();
         jettyClient.connect(serverUri, "undefined");
@@ -76,6 +77,7 @@ public class LogEntryHandlerWampClient implements LogEntryHandler {
 
 
     private URI serverUri;
+    private String authorisationKey="";
     private Map<String, WampClient> wampClients;
     private Log log;
 

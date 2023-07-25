@@ -50,7 +50,7 @@ public class ParticipanLogFile {
                 logEntry.latitude = entry.getDouble("la");
                 logEntry.longitude = entry.getDouble("lo");
                 logEntry.accuracy = entry.getDouble("ac");
-                logEntry.realSpeed = entry.getDouble("rsp");
+                logEntry.realSpeed = entry.getDouble("spd");
                 logEntries.add(logEntry);
             }
         };
